@@ -8,15 +8,21 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+bower_components
 dist
 dist-ssr
 *.local
+*.sublime*
+psd
+thumb
+sketch
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+.DS_*
 *.suo
 *.ntvs*
 *.njsproj
