@@ -1,21 +1,31 @@
-module.exports = {  
-	root: true,
-	// eslint에 어떠한 parser를 사용할지 알려주는 옵션
-	// eslint가 typescript 문법을 이해할 수 있게 해준다.
-	parser: '@typescript-eslint/parser',
-	// typescript-eslint에서 제공하는 규칙들을 사용할 수 있게 해준다.
-	plugins: ['@typescript-eslint'],  
-	// 어떠한 규칙들과 설정으로 eslint를 사용할지 명시한다.
-	// 아래와 같이 작성하면 default 값으로 적용이 된다.
-	extends: [
-		'eslint:recommended',
-		'plugin:@typescript-eslint/recommended',
-	],
-
-	rules: {
-		// 세미콜론이 없으면 에러로 취급한다.
-		semi: 'error',
-		// 기존 프로젝트에서는 'warn'으로 취급되지만, 'error'로 설정하면 에러로 취급한다.
-		'@typescript-eslint/no-unused-vars': 'error'
-	}
+module.exports = {
+  root: true,
+  // ESLint가 TypeScript 문법을 이해할 수 있게 설정
+  parser: '@typescript-eslint/parser',
+  plugins: [
+    '@typescript-eslint', // TypeScript ESLint 플러그인
+    'prettier', // Prettier 플러그인 추가
+  ],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended', // TypeScript 규칙
+    'plugin:prettier/recommended', // Prettier 규칙과 ESLint 통합
+  ],
+  rules: {
+    // 세미콜론이 없으면 에러 처리
+    semi: 'error',
+    // 사용되지 않는 변수에 대해 에러 표시
+    '@typescript-eslint/no-unused-vars': 'error',
+    // Prettier 규칙 위반 시 ESLint 에러로 처리
+    'prettier/prettier': [
+      'error',
+      {
+        semi: true,
+        singleQuote: true,
+        tabWidth: 2,
+        trailingComma: 'all',
+        printWidth: 80,
+      },
+    ],
+  },
 };
