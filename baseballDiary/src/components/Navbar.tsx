@@ -3,34 +3,64 @@ import { NavLink } from "react-router-dom";
 import "./Navbar.css";
 
 // SVG 아이콘 import
-import HomeIcon from "./assets/icons/home.svg";
-import GameIcon from "./assets/icons/game.svg";
-import CommunityIcon from "./assets/icons/community.svg";
-import DiaryIcon from "./assets/icons/diary.svg";
-import MoreIcon from "./assets/icons/more.svg";
+import HomeActiveIcon from "../assets/icons/home-active.svg";
+import HomeInactiveIcon from "../assets/icons/home-inactive.svg";
+import GameActiveIcon from "../assets/icons/game-active.svg";
+import GameInactiveIcon from "../assets/icons/game-inactive.svg";
+import CommunityActiveIcon from "../assets/icons/community-active.svg";
+import CommunityInactiveIcon from "../assets/icons/community-inactive.svg";
+import DiaryActiveIcon from "../assets/icons/diary-active.svg";
+import DiaryInactiveIcon from "../assets/icons/diary-inactive.svg";
+import MyPageActiveIcon from "../assets/icons/more-active.svg";
+import MyPageInactiveIcon from "../assets/icons/more-inactive.svg";
 
 const Navbar: React.FC = () => {
   return (
     <nav className="navbar">
-      <NavLink to="/" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-        <img src={HomeIcon} alt="홈" className="icon" />
-        <span className="label">홈</span>
+      <NavLink to="/">
+        {({ isActive }) => (
+          <img
+            src={isActive ? HomeActiveIcon : HomeInactiveIcon}
+            alt="홈"
+            className="icon"
+          />
+        )}
       </NavLink>
-      <NavLink to="/game" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-        <img src={GameIcon} alt="경기정보" className="icon" />
-        <span className="label">경기정보</span>
+      <NavLink to="/game">
+        {({ isActive }) => (
+          <img
+            src={isActive ? GameActiveIcon : GameInactiveIcon}
+            alt="경기정보"
+            className="icon"
+          />
+        )}
       </NavLink>
-      <NavLink to="/community" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-        <img src={CommunityIcon} alt="커뮤니티" className="icon" />
-        <span className="label">커뮤니티</span>
+      <NavLink to="/community">
+        {({ isActive }) => (
+          <img
+            src={isActive ? CommunityActiveIcon : CommunityInactiveIcon}
+            alt="커뮤니티"
+            className="icon"
+          />
+        )}
       </NavLink>
-      <NavLink to="/diary" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-        <img src={DiaryIcon} alt="야구일기" className="icon" />
-        <span className="label">야구일기</span>
+      <NavLink to="/diary">
+        {({ isActive }) => (
+          <img
+            src={isActive ? DiaryActiveIcon : DiaryInactiveIcon}
+            alt="다이어리"
+            className="icon"
+          />
+        )}
       </NavLink>
-      <NavLink to="/more" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-        <img src={MoreIcon} alt="더보기" className="icon" />
-        <span className="label">더보기</span>
+      <NavLink to="/mypage">
+        {({ isActive }) => (
+          <img
+            src={isActive ? MyPageActiveIcon : MyPageInactiveIcon}
+            alt="마이페이지"
+            className="icon"
+          />
+        )}
       </NavLink>
     </nav>
   );
