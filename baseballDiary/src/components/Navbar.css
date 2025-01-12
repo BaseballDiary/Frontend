@@ -1,0 +1,35 @@
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #f8f8f8;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  .nav-item {
+    text-align: center;
+    text-decoration: none;
+    color: gray;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .nav-item.active {
+    color: red;
+  }
+  
+  .nav-item .icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .nav-item .label {
+    margin-top: 4px;
+    font-size: 12px;
+  }
