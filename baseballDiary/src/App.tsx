@@ -9,11 +9,11 @@ import SplashPage from './pages/SplashPage';
 const router = createBrowserRouter([
   {
     // 스플래시 페이지 경로 설정
-    path: '/',
+    path: '/splash',
     element: <SplashPage />,
   },
   {
-    path: '/home',
+    path: '/',
     element: <Layout />,
     children: [
       {
