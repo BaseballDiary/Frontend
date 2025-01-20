@@ -3,8 +3,15 @@
 import './App.css'
 import Layout from './layouts/Layout';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import SplashPage from './pages/SplashPage';
+
 
 const router = createBrowserRouter([
+  {
+    // 스플래시 페이지 경로 설정
+    path: '/splash',
+    element: <SplashPage />,
+  },
   {
     path: '/',
     element: <Layout />,
