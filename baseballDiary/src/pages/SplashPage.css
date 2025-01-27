@@ -1,0 +1,52 @@
+/* src/SplashPage.css */
+
+/* HTML, Body, 그리고 React Root 요소에 높이와 너비 100% 적용 */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* 스플래시 컨테이너: 전체 화면을 커버하고 중앙 정렬 */
+.splash-container {
+  width: 100vw; /* 전체 뷰포트 너비 */
+  height: 100vh; /* 전체 뷰포트 높이 */
+  background-color: #ff4b4b; /* 원하는 배경색으로 변경 가능 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; /* 로고와 추가 콘텐츠를 수직으로 정렬 */
+}
+
+/* 로고 이미지 기본 스타일 */
+.splash-logo {
+  width: 20vw; /* 화면 너비의 20% */
+  max-width: 200px; /* 최대 너비 제한 */
+  height: auto;
+  transition: width 0.3s ease; /* 부드러운 크기 변화 */
+}
+
+/* 태블릿 화면 (가로 너비 768px 이하) */
+@media (max-width: 768px) {
+  .splash-logo {
+      width: 25vw; /* 화면 너비의 25% */
+      max-width: 150px; /* 최대 너비 축소 */
+  }
+}
+
+/* 모바일 화면 (가로 너비 480px 이하) */
+@media (max-width: 480px) {
+  .splash-logo {
+      width: 30vw; /* 화면 너비의 30% */
+      max-width: 100px; /* 최대 너비 더 축소 */
+  }
+}
+
+/* 매우 큰 화면 (가로 너비 1200px 이상) */
+@media (min-width: 1200px) {
+  .splash-logo {
+      width: 15vw; /* 화면 너비의 15% */
+      max-width: 250px; /* 최대 너비 확대 */
+  }
+}
