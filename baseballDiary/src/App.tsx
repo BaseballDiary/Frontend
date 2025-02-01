@@ -5,7 +5,7 @@ import Layout from './layouts/Layout';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import SplashPage from './pages/SplashPage';
 import MainPage from './pages/MainPage';
-
+import SignUpPage from './pages/SignUpPage';
 
 const router = createBrowserRouter([
   {
@@ -79,7 +79,7 @@ const router = createBrowserRouter([
     path: '/login',
     children: [
       { index: true, element: <h1>로그인 페이지입니다.</h1> },
-      { path: 'sign-up', element: <h1>회원가입 페이지입니다.</h1> },
+      { path: 'sign-up', element: <SignUpPage/> }, //회원가입 페이지 연결
       { path: 'search-account', element: <h1>아이디/비밀번호 찾기 페이지입니다.</h1> }
     ]
   },
