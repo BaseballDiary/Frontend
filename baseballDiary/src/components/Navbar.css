@@ -28,7 +28,7 @@ body {
     box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
   
     /* 다른 요소 위로 배치하기 위한 z-index */
-    z-index: 999;
+    z-index: 9999;
   }
   
   /* 아이콘 이미지 */
