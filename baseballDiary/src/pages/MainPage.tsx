@@ -45,7 +45,7 @@ const MainPage: React.FC = () => {
       {/* 배경 콘텐츠 영역 */}
       <div className="z-0">
         <header className="flex justify-between items-center p-4">
-          <img src={BevoliLogo} alt="Bevoli Logo" className="h-8" />
+          <img src={BevoliLogo} alt="Bevoli Logo" className="h-12 w-auto" />
           <img src={NotificationIcon} alt="Notification Icon" className="h-6 cursor-pointer" />
         </header>
         <section className="text-center my-2 px-4">
