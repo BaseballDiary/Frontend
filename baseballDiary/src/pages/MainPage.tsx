@@ -82,7 +82,9 @@ const MainPage: React.FC = () => {
           }}
         >
           <p style={{ fontSize: "1.125rem" }}>
-            안녕하세요! <span style={{ fontWeight: "bold" }}>{userName}님</span> 오늘의 경기를 확인해보세요.
+            안녕하세요! <span style={{ fontWeight: "bold" }}>{userName}님</span>
+            <br />
+            오늘의 경기를 확인해보세요.
           </p>
         </section>
 
@@ -94,14 +96,21 @@ const MainPage: React.FC = () => {
             borderRadius: "0.75rem", // rounded-xl
             margin: "0 1rem",        // mx-4
             padding: "1rem",         // p-4
-            boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)", // shadow-lg
+            boxShadow:
+              "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)", // shadow-lg
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <img
               src={LotteLogo}
               alt="Lotte Logo"
-              style={{ height: "2.5rem", width: "2.5rem" }} // h-10 w-10
+              style={{ transform: "scale(1.8)",height: "2.5rem", width: "2.5rem" }} // h-10 w-10
             />
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: "0.875rem", color: "#6B7280" }}>경기 예정</p>
@@ -110,7 +119,7 @@ const MainPage: React.FC = () => {
             <img
               src={HanwhaLogo}
               alt="Hanwha Logo"
-              style={{ height: "2.5rem", width: "2.5rem" }} // h-10 w-10
+              style={{transform: "scale(1.8)", height: "2.5rem", width: "2.5rem" }} // h-10 w-10
             />
           </div>
         </section>
@@ -134,8 +143,8 @@ const MainPage: React.FC = () => {
           >
             <div
               style={{
-                width: "3rem",      // w-12 (3rem)
-                height: "0.25rem",   // h-1 (0.25rem)
+                width: "3rem", // w-12 (3rem)
+                height: "0.25rem", // h-1 (0.25rem)
                 borderRadius: "9999px", // rounded-full
                 backgroundColor: "#D1D5DB", // bg-gray-300
               }}
@@ -157,13 +166,20 @@ const MainPage: React.FC = () => {
               color: "black",
               borderRadius: "0.75rem",
               padding: "1rem",
-              boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
+              boxShadow:
+                "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
               marginBottom: "1rem",
             }}
           >
             <p style={{ fontSize: "1rem", fontWeight: 600 }}>나의 야구온도는?</p>
             <div style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}>
-              <span style={{ fontSize: "2.25rem", fontWeight: "bold", color: "#EF4444" }}>
+              <span
+                style={{
+                  fontSize: "2.25rem",
+                  fontWeight: "bold",
+                  color: "#EF4444",
+                }}
+              >
                 {baseballTemp}°
               </span>
               <div
@@ -186,7 +202,13 @@ const MainPage: React.FC = () => {
                 ></div>
               </div>
             </div>
-            <p style={{ fontSize: "0.875rem", color: "#6B7280", marginTop: "0.5rem" }}>
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "#6B7280",
+                marginTop: "0.5rem",
+              }}
+            >
               0000명 중 상위 {tempPercent}%예요!
             </p>
           </div>
@@ -198,12 +220,21 @@ const MainPage: React.FC = () => {
               color: "black",
               borderRadius: "0.75rem",
               padding: "1rem",
-              boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
+              boxShadow:
+                "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
               marginBottom: "1rem",
             }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <p style={{ fontSize: "1rem", fontWeight: 600 }}>{attendanceMonth}월 출석체크</p>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <p style={{ fontSize: "1rem", fontWeight: 600 }}>
+                {attendanceMonth}월 출석체크
+              </p>
               <p style={{ color: "#EF4444", fontWeight: "bold" }}>
                 {attendanceCount}/{attendanceMax}일 출석 중
               </p>
@@ -237,26 +268,50 @@ const MainPage: React.FC = () => {
               color: "black",
               borderRadius: "0.75rem",
               padding: "1rem",
-              boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
+              boxShadow:
+                "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
             }}
           >
             <p style={{ fontSize: "1rem", fontWeight: 600 }}>
               2024년 나의 직관{" "}
-              <span style={{ fontSize: "0.875rem", color: "#EF4444", marginLeft: "0.5rem" }}>
+              <span
+                style={{
+                  fontSize: "0.875rem",
+                  color: "#EF4444",
+                  marginLeft: "0.5rem",
+                }}
+              >
                 직관 승률 {directWatchWinRate}%
               </span>
             </p>
-            <p style={{ fontSize: "0.75rem", color: "#6B7280", marginTop: "0.25rem", marginBottom: "0.5rem" }}>
+            <p
+              style={{
+                fontSize: "0.75rem",
+                color: "#6B7280",
+                marginTop: "0.25rem",
+                marginBottom: "0.5rem",
+              }}
+            >
               {directWatchCount}회의 직관 중 {directWatchWin}회 승리했어요.
             </p>
-            <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", marginBottom: "1rem" }}>
+            {/* 아이콘 버튼을 오른쪽 정렬하고, 크기를 키움 */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end", // 오른쪽 정렬
+                alignItems: "center",
+                marginBottom: "1rem",
+              }}
+            >
               <button
                 onClick={() =>
-                  setSortOrder((prev) => (prev === "recent" ? "oldest" : "recent"))
+                  setSortOrder((prev) =>
+                    prev === "recent" ? "oldest" : "recent"
+                  )
                 }
                 style={{
-                  width: "2rem",
-                  height: "2rem",
+                  width: "3rem",   // 버튼 크기를 약간 키움
+                  height: "3rem",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -268,12 +323,24 @@ const MainPage: React.FC = () => {
               >
                 <img
                   src={sortOrder === "recent" ? RecentIcon : OldestIcon}
-                  alt={sortOrder === "recent" ? "최근순 아이콘" : "오래된순 아이콘"}
-                  style={{ width: "1.5rem", height: "1.5rem" }}
-                />
+                  alt={
+                    sortOrder === "recent"
+                      ? "최근순 아이콘"
+                      : "오래된순 아이콘"
+                  }
+                  style={{ transform: "scale(2) translateX(-20%)", // 2배 확대
+                    width: "50rem !important", height: "50rem !important" }}
+                  />
               </button>
             </div>
-            <ul style={{ margin: 0, padding: 0, listStyle: "none", lineHeight: "1.5" }}>
+            <ul
+              style={{
+                margin: 0,
+                padding: 0,
+                listStyle: "none",
+                lineHeight: "1.5",
+              }}
+            >
               {displayedMatches.map((match) => (
                 <li
                   key={match.id}
