@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import SplashPage from './pages/SplashPage';
 import MainPage from './pages/MainPage';
 import SignUpPage from './pages/SignUpPage';
+import "../styles.css"
 
 const router = createBrowserRouter([
   {

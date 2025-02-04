@@ -1,9 +1,9 @@
-// MainPage.tsx (방법 1)
+// MainPage.tsx (방법 1 - 모든 스타일을 인라인으로 적용)
 import React, { useState } from "react";
 import { BottomSheet } from "react-spring-bottom-sheet";
 import "react-spring-bottom-sheet/dist/style.css";
-import "../pages/Custom.css"; // custom.css에서 .rsbs-overlay { pointer-events: none; } 적용
-import "../components/Navbar"
+import "../components/Navbar";
+import "../../styles.css";  // 다른 전역 스타일이 있다면 그대로 유지
 
 // 이미지 및 아이콘 임포트
 import BevoliLogo from "../assets/main/BevoliLogo.svg";
@@ -41,76 +41,186 @@ const MainPage: React.FC = () => {
   const displayedMatches = sortOrder === "recent" ? recentMatches : oldestMatches;
 
   return (
-    <div className="app-container relative bg-gradient-to-b from-red-500 to-orange-400 min-h-screen text-white">
+    // 루트 div: 배경 그라데이션, 최소 높이, 텍스트 흰색, 상대 위치 지정
+    <div
+      style={{
+        background: "linear-gradient(to bottom, #ef4444, #fb923c)",
+        minHeight: "100vh",
+        color: "white",
+        position: "relative",
+      }}
+    >
       {/* 배경 콘텐츠 영역 */}
-      <div className="z-0">
-        <header className="flex justify-between items-center p-4">
-          <img src={BevoliLogo} alt="Bevoli Logo" className="h-12 w-auto" />
-          <img src={NotificationIcon} alt="Notification Icon" className="h-6 cursor-pointer" />
+      <div style={{ zIndex: 0 }}>
+        {/* 헤더 */}
+        <header
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "1rem",
+          }}
+        >
+          <img
+            src={BevoliLogo}
+            alt="Bevoli Logo"
+            style={{ height: "3rem", width: "auto" }}
+          />
+          <img
+            src={NotificationIcon}
+            alt="Notification Icon"
+            style={{ height: "1.5rem", cursor: "pointer" }}
+          />
         </header>
-        <section className="text-center my-2 px-4">
-          <p className="text-lg">
-            안녕하세요! <span className="font-bold">{userName}님</span> 오늘의 경기를 확인해보세요.
+
+        {/* 인사말 섹션 */}
+        <section
+          style={{
+            textAlign: "center",
+            margin: "0.5rem 0",
+            padding: "0 1rem",
+          }}
+        >
+          <p style={{ fontSize: "1.125rem" }}>
+            안녕하세요! <span style={{ fontWeight: "bold" }}>{userName}님</span> 오늘의 경기를 확인해보세요.
           </p>
         </section>
-        <section className="bg-white text-black rounded-xl mx-4 p-4 shadow-lg">
-          <div className="flex justify-between items-center">
-            <img src={LotteLogo} alt="Lotte Logo" className="h-10 w-10" />
-            <div className="text-center">
-              <p className="text-sm text-gray-600">경기 예정</p>
-              <p className="text-xl font-bold">18:00</p>
+
+        {/* 경기 예정 카드 */}
+        <section
+          style={{
+            backgroundColor: "white",
+            color: "black",
+            borderRadius: "0.75rem", // rounded-xl
+            margin: "0 1rem",        // mx-4
+            padding: "1rem",         // p-4
+            boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)", // shadow-lg
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <img
+              src={LotteLogo}
+              alt="Lotte Logo"
+              style={{ height: "2.5rem", width: "2.5rem" }} // h-10 w-10
+            />
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontSize: "0.875rem", color: "#6B7280" }}>경기 예정</p>
+              <p style={{ fontSize: "1.25rem", fontWeight: "bold" }}>18:00</p>
             </div>
-            <img src={HanwhaLogo} alt="Hanwha Logo" className="h-10 w-10" />
+            <img
+              src={HanwhaLogo}
+              alt="Hanwha Logo"
+              style={{ height: "2.5rem", width: "2.5rem" }} // h-10 w-10
+            />
           </div>
         </section>
       </div>
 
-      {/* BottomSheet 영역 (방법 1 적용) */}
+      {/* BottomSheet 영역 */}
       <BottomSheet
         open={true}
         blocking={false}
-        defaultSnap={() => 250} // 기본 높이 조정
-        snapPoints={() => [250, 1000]} // 최소 및 최대 높이 조정
+        defaultSnap={() => 250} // 기본 높이
+        snapPoints={() => [250, 1000]} // 최소 및 최대 높이
         header={
           <div
-            className="w-full flex justify-center p-2"
-            style={{ pointerEvents: "auto" }} // 헤더 부분의 pointer-events 활성화
-          >
-            <div className="w-12 h-1 rounded-full bg-gray-300"></div>
-          </div>
-        }
-        >
-        <div
-            className="px-4 space-y-6 pb-20"
             style={{
-              pointerEvents: "auto", // 내부 컨텐츠에서만 pointer-events 활성화
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              padding: "0.5rem",
+              pointerEvents: "auto", // 헤더 부분의 pointer-events 활성화
             }}
           >
+            <div
+              style={{
+                width: "3rem",      // w-12 (3rem)
+                height: "0.25rem",   // h-1 (0.25rem)
+                borderRadius: "9999px", // rounded-full
+                backgroundColor: "#D1D5DB", // bg-gray-300
+              }}
+            ></div>
+          </div>
+        }
+      >
+        <div
+          style={{
+            padding: "0 1rem",
+            paddingBottom: "5rem", // pb-20 (approx.)
+            pointerEvents: "auto", // 내부 컨텐츠의 pointer-events 활성화
+          }}
+        >
           {/* 나의 야구온도 카드 */}
-          <div className="bg-white text-black rounded-xl p-4 shadow-lg">
-            <p className="text-base font-semibold">나의 야구온도는?</p>
-            <div className="flex items-center mt-4">
-              <span className="text-4xl font-bold text-red-500">{baseballTemp}°</span>
-              <div className="flex-grow ml-4 bg-gray-200 h-2 rounded-full overflow-hidden">
-                <div className="bg-red-500 h-full transition-all duration-300" style={{ width: `${baseballTemp}%` }}></div>
+          <div
+            style={{
+              backgroundColor: "white",
+              color: "black",
+              borderRadius: "0.75rem",
+              padding: "1rem",
+              boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
+              marginBottom: "1rem",
+            }}
+          >
+            <p style={{ fontSize: "1rem", fontWeight: 600 }}>나의 야구온도는?</p>
+            <div style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}>
+              <span style={{ fontSize: "2.25rem", fontWeight: "bold", color: "#EF4444" }}>
+                {baseballTemp}°
+              </span>
+              <div
+                style={{
+                  flexGrow: 1,
+                  marginLeft: "1rem",
+                  backgroundColor: "#E5E7EB",
+                  height: "0.5rem",
+                  borderRadius: "9999px",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    backgroundColor: "#EF4444",
+                    height: "100%",
+                    transition: "all 300ms",
+                    width: `${baseballTemp}%`,
+                  }}
+                ></div>
               </div>
             </div>
-            <p className="text-sm text-gray-500 mt-2">
+            <p style={{ fontSize: "0.875rem", color: "#6B7280", marginTop: "0.5rem" }}>
               0000명 중 상위 {tempPercent}%예요!
             </p>
           </div>
+
           {/* 1월 출석체크 카드 */}
-          <div className="bg-white text-black rounded-xl p-4 shadow-lg">
-            <div className="flex justify-between items-center">
-              <p className="text-base font-semibold">{attendanceMonth}월 출석체크</p>
-              <p className="text-red-500 font-bold">
+          <div
+            style={{
+              backgroundColor: "white",
+              color: "black",
+              borderRadius: "0.75rem",
+              padding: "1rem",
+              boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
+              marginBottom: "1rem",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <p style={{ fontSize: "1rem", fontWeight: 600 }}>{attendanceMonth}월 출석체크</p>
+              <p style={{ color: "#EF4444", fontWeight: "bold" }}>
                 {attendanceCount}/{attendanceMax}일 출석 중
               </p>
             </div>
             <select
               value={attendanceMonth}
               onChange={(e) => setAttendanceMonth(parseInt(e.target.value))}
-              className="px-3 py-1 rounded-lg text-sm bg-gray-200 text-black"
+              style={{
+                padding: "0.75rem",
+                borderRadius: "0.5rem",
+                fontSize: "0.875rem",
+                backgroundColor: "#E5E7EB",
+                color: "black",
+                border: "none",
+                marginTop: "0.5rem",
+                width: "100%",
+              }}
             >
               {[...Array(12)].map((_, index) => (
                 <option key={index} value={index + 1}>
@@ -119,31 +229,60 @@ const MainPage: React.FC = () => {
               ))}
             </select>
           </div>
+
           {/* 2024년 나의 직관 카드 */}
-          <div className="bg-white text-black rounded-xl p-4 shadow-lg">
-            <p className="text-base font-semibold">
+          <div
+            style={{
+              backgroundColor: "white",
+              color: "black",
+              borderRadius: "0.75rem",
+              padding: "1rem",
+              boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
+            }}
+          >
+            <p style={{ fontSize: "1rem", fontWeight: 600 }}>
               2024년 나의 직관{" "}
-              <span className="text-sm text-red-500 ml-2">직관 승률 {directWatchWinRate}%</span>
+              <span style={{ fontSize: "0.875rem", color: "#EF4444", marginLeft: "0.5rem" }}>
+                직관 승률 {directWatchWinRate}%
+              </span>
             </p>
-            <p className="text-xs text-gray-500 mt-1 mb-2">
+            <p style={{ fontSize: "0.75rem", color: "#6B7280", marginTop: "0.25rem", marginBottom: "0.5rem" }}>
               {directWatchCount}회의 직관 중 {directWatchWin}회 승리했어요.
             </p>
-            <div className="flex justify-start items-center mb-4">
+            <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", marginBottom: "1rem" }}>
               <button
-                className="w-8 h-8 flex items-center justify-center focus:outline-none focus:ring-0"
-                style={{ backgroundColor: "transparent", border: "none", outline: "none" }}
-                onClick={() => setSortOrder((prev) => (prev === "recent" ? "oldest" : "recent"))}
+                onClick={() =>
+                  setSortOrder((prev) => (prev === "recent" ? "oldest" : "recent"))
+                }
+                style={{
+                  width: "2rem",
+                  height: "2rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "transparent",
+                  border: "none",
+                  outline: "none",
+                  cursor: "pointer",
+                }}
               >
                 <img
                   src={sortOrder === "recent" ? RecentIcon : OldestIcon}
                   alt={sortOrder === "recent" ? "최근순 아이콘" : "오래된순 아이콘"}
-                  className="w-6 h-6"
+                  style={{ width: "1.5rem", height: "1.5rem" }}
                 />
               </button>
             </div>
-            <ul className="space-y-2">
+            <ul style={{ margin: 0, padding: 0, listStyle: "none", lineHeight: "1.5" }}>
               {displayedMatches.map((match) => (
-                <li key={match.id} className="border-b pb-2 text-sm last:border-b-0">
+                <li
+                  key={match.id}
+                  style={{
+                    borderBottom: "1px solid #E5E7EB",
+                    paddingBottom: "0.5rem",
+                    fontSize: "0.875rem",
+                  }}
+                >
                   롯데 {match.homeScore} vs {match.awayScore} 한화 ({match.date})
                 </li>
               ))}
