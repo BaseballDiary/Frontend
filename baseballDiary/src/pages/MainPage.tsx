@@ -12,7 +12,6 @@ import LotteLogo from "../assets/team/LotteLogo.svg";
 import HanwhaLogo from "../assets/team/HanwhaLogo.svg";
 import RecentIcon from "../assets/main/RecentIcon.svg";
 import OldestIcon from "../assets/main/OldestIcon.svg";
-import Navbar from "../components/Navbar";
 
 const MainPage: React.FC = () => {
   // 상태 및 임시 데이터
@@ -69,18 +68,24 @@ const MainPage: React.FC = () => {
       {/* BottomSheet 영역 (방법 1 적용) */}
       <BottomSheet
         open={true}
-        overlayprops={{ style: { pointerEvents: "none" } }}
-        // sheetProps에서 bottom: "60px"로 지정하여 Navbar와 겹치지 않도록 함
-        sheetprops={{ style: { bottom: "60px", pointerEvents: "auto" } }}
-        defaultSnap={() => 300}
-        snapPoints={() => [300, 500]}
+        blocking={false}
+        defaultSnap={() => 250} // 기본 높이 조정
+        snapPoints={() => [250, 1000]} // 최소 및 최대 높이 조정
         header={
-          <div className="w-full flex justify-center p-2">
+          <div
+            className="w-full flex justify-center p-2"
+            style={{ pointerEvents: "auto" }} // 헤더 부분의 pointer-events 활성화
+          >
             <div className="w-12 h-1 rounded-full bg-gray-300"></div>
           </div>
         }
-      >
-        <div className="px-4 space-y-6 pb-20">
+        >
+        <div
+            className="px-4 space-y-6 pb-20"
+            style={{
+              pointerEvents: "auto", // 내부 컨텐츠에서만 pointer-events 활성화
+            }}
+          >
           {/* 나의 야구온도 카드 */}
           <div className="bg-white text-black rounded-xl p-4 shadow-lg">
             <p className="text-base font-semibold">나의 야구온도는?</p>
