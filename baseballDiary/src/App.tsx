@@ -4,7 +4,9 @@ import './App.css'
 import Layout from './layouts/Layout';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import SplashPage from './pages/SplashPage';
+import MainPage from './pages/MainPage';
 import SignUpPage from './pages/SignUpPage';
+import "../styles.css"
 
 const router = createBrowserRouter([
   {
@@ -18,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true, 
-        element: <h1>피그마 - 홈화면입니다.</h1>,
+        element: <MainPage />, // 메인 페이지 컴포넌트 연결
       },
       {
         path: 'game',
