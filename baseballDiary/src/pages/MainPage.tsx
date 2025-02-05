@@ -130,7 +130,7 @@ const MainPage: React.FC = () => {
         open={true}
         blocking={false}
         defaultSnap={() => 250} // 기본 높이
-        snapPoints={() => [250, 1000]} // 최소 및 최대 높이
+        snapPoints={() => [500, 850]} // 최소 및 최대 높이
         header={
           <div
             style={{
