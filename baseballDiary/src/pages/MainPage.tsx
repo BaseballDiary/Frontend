@@ -82,7 +82,7 @@ const MainPage: React.FC = () => {
           }}
         >
           <p style={{ fontSize: "1.125rem" }}>
-            안녕하세요! <span style={{ fontWeight: "bold" }}>{userName}님</span>
+            안녕하세요! 홍길동님
             <br />
             오늘의 경기를 확인해보세요.
           </p>
