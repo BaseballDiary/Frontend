@@ -10,6 +10,9 @@ export default defineConfig({
       usePolling: true, // 파일 변경 감지
     },
   },
+  optimizeDeps: {
+    include: ['react-spring']
+  },
   build: {
     rollupOptions: {
       output: {

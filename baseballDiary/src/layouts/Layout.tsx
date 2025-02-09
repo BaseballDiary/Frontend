@@ -4,9 +4,9 @@ import Navbar from "../components/Navbar";
 
 function Layout() {
   return (
-    <div>
-      <Navbar />
+    <div style={{ position: "relative", minHeight: "100vh" }}>
       <Outlet />
+      <Navbar />
     </div>
   );
 }
