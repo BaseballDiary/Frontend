@@ -1,9 +1,11 @@
 module.exports = {
+  mode: 'jit', // ✅ JIT 모드 활성화
   content: [
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
-  safelist: ['bg-gradient-to-b', 'from-red-500', 'to-orange-400', 'min-h-screen', 'text-white'],
-  theme: { extend: {} },
+  theme: {
+    extend: {},
+  },
   plugins: [],
-}
+};
