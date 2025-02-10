@@ -6,8 +6,6 @@ import backButton from "../assets/backButton.png";
 import exitButton from "../assets/exitButton.png";
 import detailButton from "../assets/detailButton.png";
 import checkIcon from "../assets/checkIcon.png";
-import MainPage from './MainPage';
-import TeamSelection from './pages/TeamSelection';
 
 const Container = styled.div`
   display: flex;
