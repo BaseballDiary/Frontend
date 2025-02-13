@@ -1,3 +1,9 @@
+/*회원가입 페이지 tailwind css 불러오기 위함.*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -66,3 +72,4 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
