@@ -780,14 +780,14 @@
   dependencies:
     "@swc/counter" "^0.1.3"
 
-"@tailwindcss/node@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.npmjs.org/@tailwindcss/node/-/node-4.0.3.tgz"
-  integrity sha512-QsVJokOl0pJ4AbJV33D2npvLcHGPWi5MOSZtrtE0GT3tSx+3D0JE2lokLA8yHS1x3oCY/3IyRyy7XX6tmzid7A==
+"@tailwindcss/node@^4.0.5":
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/node/-/node-4.0.5.tgz#f21396215e701873a2455588f89b25909e2c66ec"
+  integrity sha512-ffTz4DX1cgr4XPuqjhm32YV6Lyx58R1CxAAnSFTamg6wXwfk3oWdb6exgAbGesPzvUgicTO0gwUdQGSsg4nNog==
   dependencies:
     enhanced-resolve "^5.18.0"
     jiti "^2.4.2"
-    tailwindcss "4.0.3"
+    tailwindcss "4.0.5"
 
 "@tailwindcss/oxide-android-arm64@4.0.3":
   version "4.0.3"
@@ -849,29 +849,29 @@
   resolved "https://registry.npmjs.org/@tailwindcss/oxide/-/oxide-4.0.3.tgz"
   integrity sha512-FFcp3VNvRjjmFA39ORM27g2mbflMQljhvM7gxBAujHxUy4LXlKa6yMF9wbHdTbPqTONiCyyOYxccvJyVyI/XBg==
   optionalDependencies:
-    "@tailwindcss/oxide-android-arm64" "4.0.3"
-    "@tailwindcss/oxide-darwin-arm64" "4.0.3"
-    "@tailwindcss/oxide-darwin-x64" "4.0.3"
-    "@tailwindcss/oxide-freebsd-x64" "4.0.3"
-    "@tailwindcss/oxide-linux-arm-gnueabihf" "4.0.3"
-    "@tailwindcss/oxide-linux-arm64-gnu" "4.0.3"
-    "@tailwindcss/oxide-linux-arm64-musl" "4.0.3"
-    "@tailwindcss/oxide-linux-x64-gnu" "4.0.3"
-    "@tailwindcss/oxide-linux-x64-musl" "4.0.3"
-    "@tailwindcss/oxide-win32-arm64-msvc" "4.0.3"
-    "@tailwindcss/oxide-win32-x64-msvc" "4.0.3"
+    "@tailwindcss/oxide-android-arm64" "4.0.5"
+    "@tailwindcss/oxide-darwin-arm64" "4.0.5"
+    "@tailwindcss/oxide-darwin-x64" "4.0.5"
+    "@tailwindcss/oxide-freebsd-x64" "4.0.5"
+    "@tailwindcss/oxide-linux-arm-gnueabihf" "4.0.5"
+    "@tailwindcss/oxide-linux-arm64-gnu" "4.0.5"
+    "@tailwindcss/oxide-linux-arm64-musl" "4.0.5"
+    "@tailwindcss/oxide-linux-x64-gnu" "4.0.5"
+    "@tailwindcss/oxide-linux-x64-musl" "4.0.5"
+    "@tailwindcss/oxide-win32-arm64-msvc" "4.0.5"
+    "@tailwindcss/oxide-win32-x64-msvc" "4.0.5"
 
-"@tailwindcss/postcss@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.npmjs.org/@tailwindcss/postcss/-/postcss-4.0.3.tgz"
-  integrity sha512-qUyxuhuI2eTgRJ+qfCQRAr69Cw7BdSz+PoNFUNoRuhPjikNC8+sxK+Mi/chaXAXewjv/zbf6if6z6ItVLh+e9Q==
+"@tailwindcss/postcss@^4.0.5":
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/postcss/-/postcss-4.0.5.tgz#99a790d6a6666a9b8e2492899f001908cba7c25f"
+  integrity sha512-U7IPb+KMASETtUvISwePM+1h+jLQspXf2ncfX/LmP/4AaH7b7DJQhqXzDCaJQd/MIh54dRUO93i9q4+Xm7dlVg==
   dependencies:
     "@alloc/quick-lru" "^5.2.0"
-    "@tailwindcss/node" "^4.0.3"
-    "@tailwindcss/oxide" "^4.0.3"
+    "@tailwindcss/node" "^4.0.5"
+    "@tailwindcss/oxide" "^4.0.5"
     lightningcss "^1.29.1"
     postcss "^8.4.41"
-    tailwindcss "4.0.3"
+    tailwindcss "4.0.5"
 
 "@types/babel__core@^7.20.5":
   version "7.20.5"

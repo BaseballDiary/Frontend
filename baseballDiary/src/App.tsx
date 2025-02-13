@@ -6,6 +6,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import SplashPage from './pages/SplashPage';
 import MainPage from './pages/MainPage';
 import SignUpPage from './pages/SignUpPage';
+import PlayInfo from './pages/PlayInfo';
+import TeamRanking from './pages/TeamRanking';
 import "../styles.css"
 
 const router = createBrowserRouter([
@@ -24,10 +26,10 @@ const router = createBrowserRouter([
       },
       {
         path: 'game',
-        element: <h1>오늘의 경기 페이지입니다.</h1>,
+        element: <PlayInfo />,
         children: [
           { path: 'schedule', element: <h1>일정 페이지입니다.</h1> },
-          { path: 'team-ranking', element: <h1>팀순위 페이지입니다.</h1> },
+          { path: 'team-ranking', element: <TeamRanking />},
           {
             path: 'player-ranking',
             element: <h1>개인순위 페이지입니다.</h1>,
