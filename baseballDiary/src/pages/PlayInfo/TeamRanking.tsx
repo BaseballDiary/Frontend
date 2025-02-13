@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import lotte from "../assets/lotte.png";
+import lotte from "../../assets/team/lotte.png";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 
@@ -114,7 +114,7 @@ const Container = styled.div`
   background: #fff;
   height: 100vh;
   overflow-y: auto;
-  padding-top: 90px; /* 👈 헤더(50px) + 탭(40px) 높이 만큼 패딩 추가 */
+  padding-top: 100px; /* 👈 헤더(50px) + 탭(40px) 높이 만큼 패딩 추가 */
 `;
 
 const Header = styled.div`
@@ -139,10 +139,9 @@ const TabContainer = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-around;
-  border-bottom: 2px solid #ddd;
   position: fixed;
   top: 50px;
-  left: 0;
+  left: 1px;
   background: white;
   z-index: 99;
 `;

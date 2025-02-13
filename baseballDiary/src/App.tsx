@@ -6,11 +6,15 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import SplashPage from './pages/SplashPage';
 import MainPage from './pages/MainPage';
 import SignUpPage from './pages/SignUpPage';
-import PlayInfo from './pages/PlayInfo';
-import TeamRanking from './pages/TeamRanking';
-import PlayerRanking from './pages/PlayerRanking';
+import PlayInfo from './pages/PlayInfo/PlayInfo';
+import TeamRanking from './pages/PlayInfo/TeamRanking';
+import PlayerRanking from './pages/PlayInfo/PlayerRanking';
 import Signup from './pages/SignUpPage';
 import PlayLayout from './layouts/PlayLayout';
+import CommunityLayout from './layouts/CommunityLayout';
+import CommunityTotal from './pages/community/CommunityTotal';
+import CommunityPopular from './pages/community/CommunityPopular';
+import PostDetail from './pages/community/PostDetail';
 import { Navigate } from "react-router-dom"; // 👈 추가
 import "../styles.css"
 
@@ -47,21 +51,12 @@ const router = createBrowserRouter([
       },
       {
         path: 'community',
+        element: <CommunityLayout />, 
         children: [
-          {
-            path: 'team-choice',
-            element: <h1>피그마 - 커뮤니티 - 팀 선택 페이지입니다.</h1>,
-          },
-          {
-            path: ':team-name',
-            children: [
-              { path: 'posts', element: <h1>일반 게시글</h1> },
-              { path: 'posts/popular', element: <h1>인기 게시글</h1> },
-              { path: 'posts/market', element: <h1>장터 게시글</h1> },
-              { path: 'posts/new', element: <h1>게시글 생성</h1> },
-              { path: 'post/:post-id', element: <h1>단일 게시글</h1> },
-            ],
-          },
+          { index: true, element: <Navigate to="/community/all" replace /> },  // 기본 경로 설정
+          { path: 'all', element: <CommunityTotal/> },
+          { path: 'popular', element: <CommunityPopular /> },
+          { path: 'post/:postId', element: <PostDetail /> }
         ],
       },
       {

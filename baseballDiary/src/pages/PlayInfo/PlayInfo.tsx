@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import lotte from "../assets/lotte.png";
-import hanhwa from "../assets/hanhwa.png";
+import lotte from "../../assets/team/lotte.png";
+import hanhwa from "../../assets/team/hanhwa.png";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 
@@ -40,10 +40,9 @@ const TabContainer = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-around;
-  border-bottom: 2px solid #ddd;
   position: fixed;
   top: 50px;
-  left: 0;
+  left: 1px;
   background: white;
   z-index: 99;
 `;
