@@ -6,9 +6,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import SplashPage from './pages/SplashPage';
 import MainPage from './pages/MainPage';
 import SignUpPage from './pages/SignUpPage';
-import LoginPage from './pages/LoginPage';
 import PlayInfo from './pages/PlayInfo';
 import TeamRanking from './pages/TeamRanking';
+import PlayerRanking from './pages/PlayerRanking';
+import Signup from './pages/SignUpPage';
+import PlayLayout from './layouts/PlayLayout';
+import { Navigate } from "react-router-dom"; // 👈 추가
 import "../styles.css"
 
 const router = createBrowserRouter([
@@ -26,17 +29,18 @@ const router = createBrowserRouter([
         element: <MainPage />, // 메인 페이지 컴포넌트 연결
       },
       {
-        path: 'game',
-        element: <PlayInfo />,
+        path: "game",
+        element: <PlayLayout />, // 기본적으로 경기 일정(PlayInfo) 표시
         children: [
-          { path: 'schedule', element: <h1>일정 페이지입니다.</h1> },
-          { path: 'team-ranking', element: <TeamRanking />},
+          { index: true, element: <Navigate to="/game/schedule" replace />}, // 기본 페이지: 경기 일정
+          { path: "schedule", element: <PlayInfo /> },
+          { path: "team-ranking", element: <TeamRanking /> },
           {
-            path: 'player-ranking',
-            element: <h1>개인순위 페이지입니다.</h1>,
+            path: "player-ranking",
+            element: <PlayerRanking />,
             children: [
-              { path: 'bowler', element: <h1>개인 투수 순위 페이지입니다.</h1> },
-              { path: 'batter', element: <h1>개인 타자 순위 페이지입니다.</h1> }
+              { path: "bowler", element: <h1>개인 투수 순위 페이지입니다.</h1> },
+              { path: "batter", element: <h1>개인 타자 순위 페이지입니다.</h1> },
             ]
           }
         ]
@@ -82,7 +86,7 @@ const router = createBrowserRouter([
     //Navbar 사용안하도록 외부에 위치
     path: '/login',
     children: [
-      { index: true, element: <LoginPage/> },
+      { index: true, element: <h1>로그인 페이지입니다.</h1> },
       { path: 'sign-up', element: <SignUpPage/> }, //회원가입 페이지 연결
       { path: 'search-account', element: <h1>아이디/비밀번호 찾기 페이지입니다.</h1> }
     ]

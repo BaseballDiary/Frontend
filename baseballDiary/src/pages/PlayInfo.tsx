@@ -1,50 +1,65 @@
+
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import lotte from "../assets/lotte.png";
 import hanhwa from "../assets/hanhwa.png";
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 // 전체 컨테이너
-export const Container = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   background: #fff;
   height: 100vh;
-  font-family: "Arial", sans-serif;
+  overflow-y: auto;
+  padding-top: 90px; /* 👈 헤더(50px) + 탭(40px) 높이 만큼 패딩 추가 */
 `;
 
-// 상단 헤더
-export const Header = styled.div`
+const Header = styled.div`
   width: 100%;
   height: 50px;
   background: #f8223b;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
 `;
 
-export const Title = styled.h2`
+const Title = styled.h2`
   color: white;
   font-size: 18px;
 `;
 
-// 탭 메뉴
-export const TabContainer = styled.div`
+const TabContainer = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-around;
   border-bottom: 2px solid #ddd;
+  position: fixed;
+  top: 50px;
+  left: 0;
+  background: white;
+  z-index: 99;
 `;
 
-export const Tab = styled.div<{ active?: boolean }>`
+const Tab = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "$active", // ✅ active가 DOM으로 전달되지 않도록 차단
+})<{ $active?: boolean }>`  // 🔹 속성명을 "$active"로 변경하여 스타일에서만 사용
   flex: 1;
   text-align: center;
   padding: 10px;
-  color: ${({ active }) => (active ? "#f8223b" : "#999")};
-  font-weight: ${({ active }) => (active ? "bold" : "normal")};
-  border-bottom: ${({ active }) => (active ? "3px solid #f8223b" : "none")};
+  cursor: pointer;
+  color: ${({ $active }) => ($active ? "#f8223b" : "#999")};
+  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
+  border-bottom: ${({ $active }) => ($active ? "3px solid #f8223b" : "none")};
 `;
+
 
 // 날짜 선택
 export const DateContainer = styled.div`
@@ -171,6 +186,8 @@ export const NavIcon = styled.span`
 
 const PlayInfo = () => {
   const [selectedDate, setSelectedDate] = useState(7);
+  const [selectedTab, setSelectedTab] = useState("schedule");
+  const navigate = useNavigate(); 
 
   return (
     <Container>
@@ -181,10 +198,17 @@ const PlayInfo = () => {
 
       {/* 탭 메뉴 */}
       <TabContainer>
-        <Tab active>경기 일정</Tab>
-        <Tab>팀 순위</Tab>
-        <Tab>개인 순위</Tab>
+      <Tab $active={location.pathname === "/game/schedule"} onClick={() => navigate("/game/schedule")}>
+  경기 일정
+</Tab>
+<Tab $active={location.pathname === "/game/team-ranking"} onClick={() => navigate("/game/team-ranking")}>
+  팀 순위
+</Tab>
+<Tab $active={location.pathname === "/game/player-ranking"} onClick={() => navigate("/game/player-ranking")}>
+  개인 순위
+</Tab>
       </TabContainer>
+
 
       {/* 날짜 선택 */}
       <DateContainer>
@@ -231,10 +255,13 @@ const PlayInfo = () => {
         </MatchItem>
       </MatchList>
 
-      {/* 하단 네비게이션 바 */}
+      
       
     </Container>
   );
+  
+  console.log("현재 선택된 탭:", selectedTab);
+
 };
 
 export default PlayInfo;
