@@ -10,6 +10,7 @@ import PlayInfo from './pages/PlayInfo/PlayInfo';
 import TeamRanking from './pages/PlayInfo/TeamRanking';
 import PlayerRanking from './pages/PlayInfo/PlayerRanking';
 import Signup from './pages/SignUpPage';
+import LoginPage from './pages/LoginPage';
 import PlayLayout from './layouts/PlayLayout';
 import CommunityLayout from './layouts/CommunityLayout';
 import CommunityTotal from './pages/community/CommunityTotal';
@@ -83,7 +84,7 @@ const router = createBrowserRouter([
     //Navbar 사용안하도록 외부에 위치
     path: '/login',
     children: [
-      { index: true, element: <h1>로그인 페이지입니다.</h1> },
+      { index: true, element: <LoginPage /> },
       { path: 'sign-up', element: <SignUpPage/> }, //회원가입 페이지 연결
       { path: 'search-account', element: <h1>아이디/비밀번호 찾기 페이지입니다.</h1> }
     ]
