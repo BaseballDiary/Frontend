@@ -10,6 +10,7 @@ import LoginPage from './pages/LoginPage';
 import PlayInfo from './pages/PlayInfo';
 import TeamRanking from './pages/TeamRanking';
 import "../styles.css"
+import Mydiary from './pages/Mydiary';
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'diary',
+        element: <Mydiary />,
         children: [
           { path: ':year', element: <h1>피그마 - 다이어리 - 연도별 일기</h1> },
           { path: 'new', element: <h1>피그마 - 다이어리 - 직관 일기 생성</h1> },
