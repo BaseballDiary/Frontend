@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getMyClub } from "../api/MyDiaryApi";
+import { getMyClub } from "../api/MydiaryApi";
 
 const Mydiary: React.FC = () => {
   const [myClub, setMyClub] = useState<string>("");
