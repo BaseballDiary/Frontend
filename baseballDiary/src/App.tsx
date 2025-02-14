@@ -20,6 +20,7 @@ import { Navigate } from "react-router-dom"; // 👈 추가
 import "../styles.css"
 import Mydiary from './pages/Mydiary';
 
+
 const router = createBrowserRouter([
   {
     // 스플래시 페이지 경로 설정
