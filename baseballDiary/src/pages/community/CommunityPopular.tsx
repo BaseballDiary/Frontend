@@ -15,6 +15,7 @@ import lg from "../../assets/team/lg.png";
 import ssg from "../../assets/team/ssg.png";
 import kbo from "../../assets/team/KBO.png";
 import { FaEllipsisH } from "react-icons/fa";
+import { useEffect } from "react";
 
 // ✅ 사용자가 회원가입 시 선택한 팀 (테스트용, 실제로는 Redux 또는 Context 사용)
 const selectedTeam = "두산";
@@ -37,8 +38,22 @@ const teams = [
 const CommunityPopular = () => {
   const navigate = useNavigate();
   const location = useLocation();
-   const [menuOpen, setMenuOpen] = useState(false);
+const [menuOpen, setMenuOpen] = useState<number | null>(null); // 현재 열린 메뉴의 ID 저장
   const [currentTab, setCurrentTab] = useState("/community/all");
+
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const menuElement = document.getElementById("menu"); // ✅ 메뉴 요소 가져오기
+      if (menuElement && menuElement.contains(event.target as Node)) {
+        return; // ✅ 메뉴 내부를 클릭한 경우 닫히지 않도록 예외 처리
+      }
+      setMenuOpen(null);
+    };
+  
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   return (
     <Container>
@@ -86,20 +101,40 @@ const CommunityPopular = () => {
       {/* 게시글 목록 (현재 선택한 팀 관련 게시글만 표시) */}
       <PostList>
         {Array.from({ length: 10 }).map((_, index) => (
-          <Post key={index} onClick={() => navigate(`/community/post/${index}`)}>
+          <Post key={index}onClick={() => navigate(`/community/post/${index}`)}>
           <ProfileImage>😀</ProfileImage>
           <PostContent>
             <PostHeader>
-  <Username>사용자 이름</Username>
-  <PostTime>15분 전</PostTime>
+              <Username>사용자 이름</Username>
+              <PostTime>15분 전</PostTime>
+            
+              {/* 15분전과 점 세 개 버튼을 감싸는 컨테이너 */}
+              <PostActions>
+        {/* 점 3개 버튼 */}
+        <OptionsButton
+  onClick={(e) => {
+    e.stopPropagation(); // ✅ 부모 이벤트 전파 방지
+    setMenuOpen((prev) => (prev === index ? null : index)); // ✅ 현재 메뉴와 같은지 체크 후 토글
+    //console.log("버튼 클릭됨, 변경될 menuOpen 상태:", menuOpen === index ? null : index);
+  }}
+>
+  <FaEllipsisH size={18} />
+</OptionsButton>
 
-  {/* 15분전과 점 세 개 버튼을 감싸는 컨테이너 */}
-  <PostActions>
-    <OptionsButton onClick={() => setMenuOpen(!menuOpen)}>
-      <FaEllipsisH size={18} />
-    </OptionsButton>
-  </PostActions>
-</PostHeader>
+{/* 삭제 버튼 (메뉴) */}
+{menuOpen === index && (
+  <Menu id="menu" $isOpen={menuOpen === index} onClick={(e) => e.stopPropagation()}>
+    <MenuItem className="delete" onClick={(e) => {
+      e.stopPropagation(); // ✅ 삭제 버튼 클릭 시 이벤트 전파 방지
+      console.log("삭제됨");
+    }}>
+      🗑 삭제하기
+    </MenuItem>
+  </Menu>
+)}
+
+      </PostActions>
+            </PostHeader>
             <PostText>
               게시글 내용이 들어갑니다. 게시글 내용이 들어갑니다. 게시글 내용이 들어갑니다.
             </PostText>
@@ -233,28 +268,37 @@ const TeamLogo = styled.img`
 `;
 
 
-const Menu = styled.div`
+const Menu = styled.div<{ $isOpen: boolean }>`
   position: absolute;
-  top: 40px;
-  right: 0;
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
   background: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  z-index: 101;
+  z-index: 9999; /* ✅ 다른 요소 위로 배치 */
   overflow: hidden;
+  width: 100px;
+  margin-right: 5px;
+  display: ${({ $isOpen }) => ($isOpen ? "block" : "none")}; // ✅ $isOpen 사용
+  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
+  transition: opacity 0.2s ease-in-out;
 `;
 
 const MenuItem = styled.div`
   padding: 10px;
   font-size: 14px;
   cursor: pointer;
+  text-align: center;
   &:hover {
     background: #f1f1f1;
   }
   &.delete {
     color: red;
+    font-weight: bold;
   }
 `;
+
 
 
 const PostList = styled.div`

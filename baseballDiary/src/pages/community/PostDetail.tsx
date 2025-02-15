@@ -7,7 +7,7 @@ import backButtonWhite from "../../assets/backButtonWhite.png";
 const PostDetail = () => {
   const navigate = useNavigate();
   const { postId } = useParams(); // ✅ URL에서 postId 가져오기
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState<number | null>(null); // 현재 열린 메뉴의 ID 저장
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([
     { id: 1, username: "사용자 이름", content: "댓글 내용입니다." },
@@ -21,71 +21,92 @@ const PostDetail = () => {
     }
   };
 
+    // ✅ 삭제 버튼 클릭 시 실행할 함수
+    const handleDelete = () => {
+      console.log(`게시글 ${postId} 삭제`);
+      setMenuOpen(null); // 삭제 후 메뉴 닫기
+    };
+
+  
+
   return (
-    <Container>
-      {/* 상단 네비게이션 */}
-      <Header>
-        <HeaderButton_back onClick={() => navigate(-1)}>
-          <BackIcon src={backButtonWhite} alt="뒤로가기" />
-        </HeaderButton_back>
-        <Title>게시글 {postId}</Title>
-      </Header>
 
-      <PostContainer>
-  {/* ✅ 프로필 사진과 사용자 이름을 수평 정렬 */}
-  <ProfileSection>
-    <ProfileImage>😀</ProfileImage>
-    <Username>사용자 이름</Username>
-    <PostTime>15분 전</PostTime>
-  </ProfileSection>
+    <Container onClick={() => setMenuOpen(null)}> {/* ✅ 클릭하면 메뉴 닫힘 */}
+    {/* 상단 네비게이션 */}
+    <Header>
+      <HeaderButton_back onClick={() => navigate(-1)}>
+        <BackIcon src={backButtonWhite} alt="뒤로가기" />
+      </HeaderButton_back>
+      <Title>게시글 {postId}</Title>
+    </Header>
 
-  <PostContent>
-    <PostHeader>
-      <PostActions>
-      <OptionsButton onClick={() => setMenuOpen(!menuOpen)}>
-          <FaEllipsisH size={18} />
-        </OptionsButton>
-      </PostActions>
-    </PostHeader>
-    <PostText>
-      게시글 내용이 들어갑니다. 게시글 내용이 들어갑니다. 게시글 내용이 들어갑니다.
-    </PostText>
-    <PostMeta>
-      <Icon>💬</Icon>
-      <span>2</span>
-      <Icon>❤️</Icon>
-      <span>5</span>
-    </PostMeta>
-  </PostContent>
-</PostContainer>
+    {/* 게시글 본문 */}
+    <PostContainer onClick={(e) => e.stopPropagation()}> {/* ✅ 메뉴 닫힘 방지 */}
+      <ProfileSection>
+        <ProfileImage>😀</ProfileImage>
+        <Username>사용자 이름</Username>
+        <PostTime>15분 전</PostTime>
 
+        {/* 점 3개 버튼 및 삭제 메뉴 */}
+        <PostActions>
+          <OptionsButton onClick={(e) => {
+            e.stopPropagation(); // ✅ 부모 컨테이너 클릭 이벤트 방지
+            setMenuOpen(menuOpen === Number(postId) ? null : Number(postId));
+          }}>
+            <FaEllipsisH size={18} />
+          </OptionsButton>
 
+          {/* 삭제 버튼 */}
+          {menuOpen === Number(postId) && (
+            <Menu>
+              <MenuItem className="delete" onClick={handleDelete}>
+                🗑 삭제하기
+              </MenuItem>
+            </Menu>
+          )}
+        </PostActions>
+      </ProfileSection>
 
-      {/* 댓글 목록 */}
-      <CommentSection>
-        {comments.map((comment) => (
-          <Comment key={comment.id}>
-            <ProfileImage>😀</ProfileImage>
-            <CommentContent>
-              <Username>{comment.username}</Username>
-              <CommentText>{comment.content}</CommentText>
-            </CommentContent>
-          </Comment>
-        ))}
-      </CommentSection>
+      <PostContent>
+        <PostText>
+          게시글 내용이 들어갑니다. 게시글 내용이 들어갑니다. 게시글 내용이 들어갑니다.
+        </PostText>
+        <PostMeta>
+          <Icon>💬</Icon>
+          <span>2</span>
+          <Icon>❤️</Icon>
+          <span>5</span>
+        </PostMeta>
+      </PostContent>
+    </PostContainer>
 
-      {/* 댓글 입력란 */}
-      <CommentInputContainer>
-        <CommentInput
-          type="text"
-          placeholder="댓글을 입력하세요..."
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-        />
-        <SendButton onClick={handleAddComment}>게시</SendButton>
-      </CommentInputContainer>
-    </Container>
-  );
+    {/* 댓글 목록 */}
+    <CommentSection>
+      {comments.map((comment) => (
+        <Comment key={comment.id}>
+          <ProfileImage>😀</ProfileImage>
+          <CommentContent>
+            <Username>{comment.username}</Username>
+            <CommentText>{comment.content}</CommentText>
+          </CommentContent>
+        </Comment>
+      ))}
+    </CommentSection>
+
+    {/* 댓글 입력란 */}
+    <CommentInputContainer>
+      <CommentInput
+        type="text"
+        placeholder="댓글을 입력하세요..."
+        value={commentText}
+        onChange={(e) => setCommentText(e.target.value)}
+      />
+      <SendButton onClick={() => setComments([...comments, { id: Date.now(), username: "나", content: commentText }])}>
+        게시
+      </SendButton>
+    </CommentInputContainer>
+  </Container>
+);
 };
 
 export default PostDetail;

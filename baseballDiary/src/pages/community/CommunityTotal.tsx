@@ -38,7 +38,7 @@ const teams = [
 const CommunityTotal = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState<number | null>(null); // 현재 열린 메뉴의 ID 저장
   const [currentTab, setCurrentTab] = useState("/community/all");
 
   return (
@@ -96,9 +96,19 @@ const CommunityTotal = () => {
             
               {/* 15분전과 점 세 개 버튼을 감싸는 컨테이너 */}
               <PostActions>
-                <OptionsButton onClick={() => setMenuOpen(!menuOpen)}>
+                {/* 점 3개 버튼 */}
+                <OptionsButton onClick={() => setMenuOpen(menuOpen === index ? null : index)}>
                   <FaEllipsisH size={18} />
                 </OptionsButton>
+
+                {/* 삭제 버튼 (메뉴) */}
+                {menuOpen === index && (
+                  <Menu>
+                    <MenuItem className="delete" onClick={() => console.log("삭제됨")}>
+                      🗑 삭제하기
+                    </MenuItem>
+                  </Menu>
+                )}
               </PostActions>
             </PostHeader>
             <PostText>
