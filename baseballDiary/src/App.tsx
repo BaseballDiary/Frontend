@@ -19,6 +19,7 @@ import PostDetail from './pages/community/PostDetail';
 import { Navigate } from "react-router-dom"; // 👈 추가
 import "../styles.css"
 import Mydiary from './pages/Mydiary';
+ 
 
 const router = createBrowserRouter([
   {
