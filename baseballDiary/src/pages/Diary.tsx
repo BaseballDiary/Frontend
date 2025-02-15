@@ -14,6 +14,13 @@ import lg from "../assets/team/lg.png";
 import ssg from "../assets/team/ssg.png";
 import kbo from "../assets/team/KBO.png";
 
+// 감정 icon import
+import feeling1 from "../assets/feeling/feeling1.svg"
+import feeling2 from "../assets/feeling/feeling2.svg"
+import feeling3 from "../assets/feeling/feeling3.svg"
+import feeling4 from "../assets/feeling/feeling4.svg"
+import feeling5 from "../assets/feeling/feeling5.svg"
+
 // 팀 로고 매핑
 const teamLogos: { [key: string]: string } = {
   Lotte: lotte,
@@ -36,6 +43,7 @@ interface GameRecord {
   score: string;
   team1: string;
   team2: string;
+  feeling: number;
 }
 
 const Diary = () => {
@@ -46,18 +54,18 @@ const Diary = () => {
   // 데이터 로드 (향후 API 연동을 고려)
   useEffect(() => {
     const fetchGameRecords = async () => {
-      try {
-        const data: GameRecord[] = [
-          { id: 1, result: "승리", score: "11 - 5", team1: "Eagles", team2: "Giants" },
-          { id: 2, result: "패배", score: "5 - 11", team1: "Eagles", team2: "Giants" },
-          { id: 3, result: "승리", score: "11 - 5", team1: "Eagles", team2: "Giants" },
-          { id: 4, result: "승리", score: "11 - 5", team1: "Eagles", team2: "Giants" },
-        ];
-        setGameRecords(data);
-      } catch (error) {
-        console.error("데이터 불러오기 실패", error);
-      }
-    };
+        try {
+          const data: GameRecord[] = [
+            { id: 1, result: "승리", score: "11 - 5", team1: "Hanwha", team2: "Lotte", feeling: 3 },
+            { id: 2, result: "패배", score: "5 - 11", team1: "Samsung", team2: "Doosan", feeling: 1 },
+            { id: 3, result: "승리", score: "11 - 5", team1: "Kia", team2: "KT", feeling: 5 },
+            { id: 4, result: "승리", score: "11 - 5", team1: "NC", team2: "LG", feeling: 2 },
+          ];
+          setGameRecords(data);
+        } catch (error) {
+          console.error("데이터 불러오기 실패", error);
+        }
+      };
 
     fetchGameRecords();
   }, [selectedYear]); // 연도 변경 시 데이터 갱신
@@ -178,6 +186,22 @@ const Diary = () => {
     const [score1, score2] = game.score.split(" - ").map(Number);
     const isTeam1Winner = score1 > score2;
 
+    // feeling 값에 따라 아이콘 매핑
+    const feelingIcons: { [key: number]: string } = {
+      1: feeling1,
+      2: feeling2,
+      3: feeling3,
+      4: feeling4,
+      5: feeling5,
+    };
+
+    // 🛠 **팀 로고를 올바르게 매핑 (대소문자 문제 해결)**
+    const formatTeamName = (team: string) =>
+      team.charAt(0).toUpperCase() + team.slice(1).toLowerCase();
+
+    const team1Logo = teamLogos[formatTeamName(game.team1)] || teamLogos["KBO"];
+    const team2Logo = teamLogos[formatTeamName(game.team2)] || teamLogos["KBO"];
+
     return (
       <div
         key={game.id}
@@ -192,10 +216,10 @@ const Diary = () => {
           marginBottom: "0.5rem",
         }}
       >
-        {/* 왼쪽 아이콘 (tempIcon) */}
+        {/* 왼쪽 아이콘 (feeling 아이콘) */}
         <img
-          src={kbo}
-          alt="tempIcon"
+          src={feelingIcons[game.feeling] || feeling1} // 기본값 feeling1
+          alt="feeling icon"
           style={{ width: "48px", height: "48px", marginRight: "12px" }}
         />
 
@@ -220,11 +244,11 @@ const Diary = () => {
             {/* 팀 1 (좌측) */}
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
               <img
-                src={teamLogos["Hanwha"]}
-                alt="Hanwha"
+                src={team1Logo}
+                alt={game.team1}
                 style={{ width: "40px", height: "40px" }}
               />
-              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>한화</p>
+              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{game.team1}</p>
             </div>
 
             {/* 경기 결과 */}
@@ -242,11 +266,11 @@ const Diary = () => {
             {/* 팀 2 (우측) */}
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
               <img
-                src={teamLogos["Lotte"]}
-                alt="Lotte"
+                src={team2Logo}
+                alt={game.team2}
                 style={{ width: "40px", height: "40px" }}
               />
-              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>롯데</p>
+              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{game.team2}</p>
             </div>
           </div>
         </div>
