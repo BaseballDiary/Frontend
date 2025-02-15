@@ -76,7 +76,7 @@ const router = createBrowserRouter([
       {
         path: 'mypage',
         children: [
-          { index: true, element: <MyDiary/> },
+          { index: true, element: <Mydiary/> },
           { path: 'edit', element: <h1>프로필 수정</h1> },
         ],
       },
