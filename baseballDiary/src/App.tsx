@@ -18,9 +18,10 @@ import CommunityPopular from './pages/community/CommunityPopular';
 import PostDetail from './pages/community/PostDetail';
 import { Navigate } from "react-router-dom"; // 👈 추가
 import "../styles.css"
-// import Mydiary from './pages/Mydiary';
+import Mydiary from './pages/Mydiary';
 import Diary from './pages/Diary';
 import DiaryNew from './pages/DiaryNew';
+
 
 const router = createBrowserRouter([
   {
@@ -75,7 +76,7 @@ const router = createBrowserRouter([
       {
         path: 'mypage',
         children: [
-          { index: true, element: <h1>마이페이지 - 프로필</h1> },
+          { index: true, element: <MyDiary/> },
           { path: 'edit', element: <h1>프로필 수정</h1> },
         ],
       },
