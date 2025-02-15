@@ -5,10 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:css": "postcss styles.css -o output.css",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve" : "serve -s build"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.3",
@@ -21,6 +20,7 @@
     "react-router-dom": "^7.1.1",
     "react-spring": "^9.7.5",
     "react-spring-bottom-sheet": "3.5.0-alpha.0",
+    "serve": "^14.2.4",
     "styled-components": "^6.1.14"
   },
   "devDependencies": {
@@ -46,10 +46,5 @@
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.5"
-  },
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
   }
 }
