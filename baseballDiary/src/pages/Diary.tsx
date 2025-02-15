@@ -1,6 +1,33 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
+// 팀 로고 import
+import lotte from "../assets/team/lotte.png";
+import doosan from "../assets/team/doosan.png";
+import samsung from "../assets/team/samsung.png";
+import kiwoom from "../assets/team/kiwoom.png";
+import hanhwa from "../assets/team/hanhwa.png";
+import kia from "../assets/team/kia.png";
+import kt from "../assets/team/kt.png";
+import nc from "../assets/team/nc.png";
+import lg from "../assets/team/lg.png";
+import ssg from "../assets/team/ssg.png";
+import kbo from "../assets/team/KBO.png";
+
+// 팀 로고 매핑
+const teamLogos: { [key: string]: string } = {
+  Lotte: lotte,
+  Doosan: doosan,
+  Samsung: samsung,
+  Kiwoom: kiwoom,
+  Hanwha: hanhwa,
+  Kia: kia,
+  KT: kt,
+  NC: nc,
+  LG: lg,
+  SSG: ssg,
+  KBO: kbo, // 기본 로고
+};
 
 
 interface GameRecord {
@@ -145,50 +172,88 @@ const Diary = () => {
       </div>
 
       {/* Game List */}
-      <div style={{ padding: "1rem" }}>
-        {gameRecords.map((game) => (
+<div style={{ padding: "1rem" }}>
+  {gameRecords.map((game) => {
+    // 점수 비교해서 승리한 팀 결정
+    const [score1, score2] = game.score.split(" - ").map(Number);
+    const isTeam1Winner = score1 > score2;
+
+    return (
+      <div
+        key={game.id}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          backgroundColor: "white",
+          padding: "1rem",
+          borderRadius: "0.75rem",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          border: "1px solid #E5E7EB",
+          marginBottom: "0.5rem",
+        }}
+      >
+        {/* 왼쪽 아이콘 (tempIcon) */}
+        <img
+          src={kbo}
+          alt="tempIcon"
+          style={{ width: "48px", height: "48px", marginRight: "12px" }}
+        />
+
+        {/* 경기 정보 컨테이너 */}
+        <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+          {/* 상단 날짜 & 장소 */}
           <div
-            key={game.id}
             style={{
               display: "flex",
-              alignItems: "center",
-              backgroundColor: "#F3F4F6",
-              padding: "1rem",
-              borderRadius: "0.5rem",
-              marginBottom: "0.5rem",
+              justifyContent: "space-between",
+              color: "#6B7280",
+              fontSize: "0.875rem",
+              marginBottom: "8px",
             }}
           >
-            <div
-              style={{
-                width: "3rem",
-                height: "3rem",
-                borderRadius: "50%",
-                backgroundColor: "#3B82F6",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-                fontWeight: "bold",
-              }}
-            >
-              P
+            <p>01.45(수) 18:00</p>
+            <p>잠실</p>
+          </div>
+
+          {/* 경기 내용 */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            {/* 팀 1 (좌측) */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+              <img
+                src={teamLogos["Hanwha"]}
+                alt="Hanwha"
+                style={{ width: "40px", height: "40px" }}
+              />
+              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>한화</p>
             </div>
-            <div style={{ marginLeft: "1rem", flex: 1 }}>
-              <p
-                style={{
-                  color: game.result === "승리" ? "#10B981" : "#EF4444",
-                  fontWeight: "bold",
-                }}
-              >
+
+            {/* 경기 결과 */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, textAlign: "center" }}>
+              <p style={{ fontWeight: "bold", color: game.result === "승리" ? "#10B981" : "#EF4444" }}>
                 {game.result}
               </p>
-              <p style={{ fontSize: "1.125rem", fontWeight: "bold" }}>
-                {game.team1} {game.score} {game.team2}
+              <p style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
+                <span style={{ fontWeight: isTeam1Winner ? "800" : "400" }}>{score1}</span>
+                {" - "}
+                <span style={{ fontWeight: !isTeam1Winner ? "800" : "400" }}>{score2}</span>
               </p>
             </div>
+
+            {/* 팀 2 (우측) */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+              <img
+                src={teamLogos["Lotte"]}
+                alt="Lotte"
+                style={{ width: "40px", height: "40px" }}
+              />
+              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>롯데</p>
+            </div>
           </div>
-        ))}
+        </div>
       </div>
+    );
+  })}
+</div>
 
       {/* Floating Action Button */}
       <button
