@@ -195,13 +195,6 @@ const Diary = () => {
       5: feeling5,
     };
 
-    // 🛠 **팀 로고를 올바르게 매핑 (대소문자 문제 해결)**
-    const formatTeamName = (team: string) =>
-      team.charAt(0).toUpperCase() + team.slice(1).toLowerCase();
-
-    const team1Logo = teamLogos[formatTeamName(game.team1)] || teamLogos["KBO"];
-    const team2Logo = teamLogos[formatTeamName(game.team2)] || teamLogos["KBO"];
-
     return (
       <div
         key={game.id}
@@ -244,11 +237,11 @@ const Diary = () => {
             {/* 팀 1 (좌측) */}
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
               <img
-                src={team1Logo}
-                alt={game.team1}
+                src={teamLogos["Hanwha"]}
+                alt="Hanwha"
                 style={{ width: "40px", height: "40px" }}
               />
-              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{game.team1}</p>
+              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>한화</p>
             </div>
 
             {/* 경기 결과 */}
@@ -266,11 +259,11 @@ const Diary = () => {
             {/* 팀 2 (우측) */}
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
               <img
-                src={team2Logo}
-                alt={game.team2}
+                src={teamLogos["Lotte"]}
+                alt="Lotte"
                 style={{ width: "40px", height: "40px" }}
               />
-              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{game.team2}</p>
+              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>롯데</p>
             </div>
           </div>
         </div>
@@ -292,7 +285,7 @@ const Diary = () => {
           boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
           cursor: "pointer",
         }}
-        onClick={() => navigate("/diary/create")}
+        onClick={() => navigate("/diary/new")}
       >
         <FaPlus size={24} />
       </button>

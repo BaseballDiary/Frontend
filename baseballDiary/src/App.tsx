@@ -19,7 +19,8 @@ import PostDetail from './pages/community/PostDetail';
 import { Navigate } from "react-router-dom"; // 👈 추가
 import "../styles.css"
 // import Mydiary from './pages/Mydiary';
-import Diary from './pages/diary';
+import Diary from './pages/Diary';
+import DiaryNew from './pages/DiaryNew';
 
 const router = createBrowserRouter([
   {
@@ -64,10 +65,10 @@ const router = createBrowserRouter([
       },
       {
         path: 'diary',
-        element: <Diary />,
         children: [
+          { index: true, element: <Diary /> },
           { path: ':year', element: <h1>피그마 - 다이어리 - 연도별 일기</h1> },
-          { path: 'new', element: <h1>피그마 - 다이어리 - 직관 일기 생성</h1> },
+          { path: 'new', element: <DiaryNew /> },
           { path: ':diaryId', element: <h1>피그마 - 다이어리 - 특정 직관 일기</h1> },
         ],
       },
