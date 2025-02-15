@@ -79,7 +79,16 @@ function DiaryNew() {
     maxWidth: "600px",
   };
 
+  // Search view : 날짜와 상대 팀 선택 여부 검증
   const handleSearch = () => {
+    if (!selectedDate) {
+      alert("경기날짜를 선택하세요");
+      return;
+    }
+    if (!selectedTeam) {
+      alert("경기대상을 선택하세요");
+      return;
+    }
     setGameResults(dummyGames);
     setSelectedGame(null);
     setView("select");
@@ -279,28 +288,11 @@ function DiaryNew() {
             );
           })}
           <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-            <button
-              style={{
-                flex: 1,
-                backgroundColor: "red",
-                color: "white",
-                padding: "0.5rem",
-                border: "none",
-                cursor: "pointer",
-              }}
-              onClick={() => setView("search")}
-            >
-              이전
-            </button>
-            <button
-              style={{
-                flex: 1,
-                backgroundColor: "red",
-                color: "white",
-                padding: "0.5rem",
-                border: "none",
-                cursor: "pointer",
-              }}
+            <NextButton text="이전" bgColor="red" width="100%" onClick={() => setView("search")} />
+            <NextButton
+              text="선택하기"
+              bgColor="red"
+              width="100%"
               onClick={() => {
                 if (selectedGame) {
                   setView("write");
@@ -308,9 +300,7 @@ function DiaryNew() {
                   alert("경기를 선택해주세요");
                 }
               }}
-            >
-              선택하기
-            </button>
+            />
           </div>
         </div>
       )}
@@ -349,7 +339,7 @@ function DiaryNew() {
                   <img
                     src={teamAssets[teamMapping[selectedGame.team1] as keyof typeof teamAssets]}
                     alt={selectedGame.team1}
-                    style={{ width: "60px", height: "60px" }}
+                    style={{ width: "72px", height: "72px" }}
                   />
                   <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{selectedGame.team1}</p>
                 </div>
@@ -379,19 +369,17 @@ function DiaryNew() {
                   <img
                     src={teamAssets[teamMapping[selectedGame.team2] as keyof typeof teamAssets]}
                     alt={selectedGame.team2}
-                    style={{ width: "60px", height: "60px" }}
+                    style={{ width: "72px", height: "72px" }}
                   />
                   <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{selectedGame.team2}</p>
                 </div>
               </div>
             </div>
           </div>
-
           {/* 일기내용 라벨 */}
           <div style={{ marginBottom: "1rem" }}>
             <p style={{ textAlign: "left", fontSize: "1rem", fontWeight: "bold" }}>일기내용</p>
           </div>
-
           {/* 직관/집관 선택 UI */}
           <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
             <div
@@ -421,8 +409,7 @@ function DiaryNew() {
               </p>
             </div>
           </div>
-
-          {/* 감정 선택 UI (카드 안에 표시, 선택된 감정에만 빨간 테두리) */}
+          {/* 감정 선택 UI */}
           <div
             style={{
               backgroundColor: "white",
@@ -440,8 +427,8 @@ function DiaryNew() {
                   src={feelingImg}
                   alt={`feeling${index + 1}`}
                   style={{
-                    width: "3rem",
-                    height: "3rem",
+                    width: "4em",
+                    height: "4rem",
                     border: feeling === index ? "2px solid red" : "none",
                     cursor: "pointer",
                   }}
@@ -450,7 +437,6 @@ function DiaryNew() {
               ))}
             </div>
           </div>
-
           {/* 감상평 입력 영역 */}
           <div>
             <p style={{ textAlign: "left", fontSize: "1rem", fontWeight: "bold", marginBottom: "0.5rem" }}>나의 감상평</p>
@@ -461,7 +447,7 @@ function DiaryNew() {
                 padding: "0.75rem",
                 marginTop: "0.5rem",
                 borderRadius: "8px",
-                minHeight: "150px",
+                minHeight: "180px",
                 resize: "vertical",
               }}
               placeholder="경기에 대한 감상평을 적어주세요."
@@ -469,35 +455,29 @@ function DiaryNew() {
               onChange={(e) => setReview(e.target.value)}
             />
           </div>
-
-          <button
-            style={{
-              width: "100%",
-              backgroundColor: "red",
-              color: "white",
-              padding: "0.5rem",
-              marginTop: "1rem",
-              border: "none",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              if (!attendance) {
-                alert("직관/집관을 선택하세요");
-                return;
-              }
-              console.log("전송된 데이터:", {
-                selectedDate,
-                selectedTeam,
-                selectedGame,
-                attendance,
-                feeling,
-                review,
-              });
-              alert("전송되었습니다");
-            }}
-          >
-            작성하기
-          </button>
+          <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+            <NextButton text="이전" bgColor="red" width="100%" onClick={() => setView("select")} />
+            <NextButton
+              text="작성하기"
+              bgColor="red"
+              width="100%"
+              onClick={() => {
+                if (!attendance) {
+                  alert("직관/집관을 선택하세요");
+                  return;
+                }
+                console.log("전송된 데이터:", {
+                  selectedDate,
+                  selectedTeam,
+                  selectedGame,
+                  attendance,
+                  feeling,
+                  review,
+                });
+                alert("전송되었습니다");
+              }}
+            />
+          </div>
         </div>
       )}
     </div>
