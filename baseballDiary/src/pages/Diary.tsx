@@ -21,6 +21,7 @@ import feeling3 from "../assets/feeling/feeling3.svg"
 import feeling4 from "../assets/feeling/feeling4.svg"
 import feeling5 from "../assets/feeling/feeling5.svg"
 
+
 // 팀 로고 매핑
 const teamLogos: { [key: string]: string } = {
   Lotte: lotte,

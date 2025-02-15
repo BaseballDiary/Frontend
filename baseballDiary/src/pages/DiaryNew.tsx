@@ -15,6 +15,8 @@ import feeling2 from "../assets/feeling/feeling2.svg";
 import feeling3 from "../assets/feeling/feeling3.svg";
 import feeling4 from "../assets/feeling/feeling4.svg";
 import feeling5 from "../assets/feeling/feeling5.svg";
+import check from "../assets/check.svg";
+import circle from "../assets/circle.svg";
 import NextButton from "../components/Next-button";
 
 const teamAssets = { lotte, doosan, samsung, kiwoom, hanhwa, kia, kt, nc, lg, ssg, kbo };
@@ -38,16 +40,15 @@ function DiaryNew() {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [gameResults, setGameResults] = useState<typeof dummyGames>([]);
-  // 선택한 게임은 select view에서 카드 터치 시 저장됨
   const [selectedGame, setSelectedGame] = useState<typeof dummyGames[number] | null>(null);
   const [view, setView] = useState("search"); // search, select, write
   const [feeling, setFeeling] = useState<number | null>(null);
   const [review, setReview] = useState("");
+  const [attendance, setAttendance] = useState<string | null>(null);
 
   // 팀 선택 모달 상태 관리
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
 
-  // teamBoxStyle 정의
   const teamBoxStyle = {
     flex: 1,
     border: "1px solid gray",
@@ -57,7 +58,6 @@ function DiaryNew() {
     borderRadius: "8px",
   };
 
-  // 모달 관련 스타일 정의
   const modalOverlayStyle = {
     position: "fixed" as const,
     top: 0,
@@ -71,7 +71,6 @@ function DiaryNew() {
     zIndex: 1000,
   };
 
-  // 수정: 모달 크기를 늘림 (maxWidth: "600px")
   const modalStyle = {
     backgroundColor: "white",
     padding: "1rem",
@@ -82,7 +81,6 @@ function DiaryNew() {
 
   const handleSearch = () => {
     setGameResults(dummyGames);
-    // 초기에는 선택된 게임이 없도록 함
     setSelectedGame(null);
     setView("select");
   };
@@ -94,7 +92,7 @@ function DiaryNew() {
         minHeight: "100vh",
         color: "black",
         position: "relative",
-        paddingBottom: "4rem", // FAB 버튼이 떠있을 공간 확보
+        paddingBottom: "4rem",
       }}
     >
       {/* Header */}
@@ -112,14 +110,10 @@ function DiaryNew() {
       </header>
       {view === "search" && (
         <div style={{ padding: "1rem" }}>
-          {/* 경기 검색 제목 좌측 정렬 */}
           <h2 style={{ fontSize: "1.125rem", fontWeight: "bold", textAlign: "left" }}>경기 검색</h2>
-
-          {/* 경기날짜 레이블 (굵지 않게, 좌측 정렬) */}
           <div style={{ textAlign: "left", marginTop: "1rem" }}>
             <span style={{ fontWeight: "normal" }}>경기날짜</span>
           </div>
-          {/* 날짜 선택 input의 너비 축소 */}
           <input
             type="date"
             style={{
@@ -131,14 +125,10 @@ function DiaryNew() {
             }}
             onChange={(e) => setSelectedDate(e.target.value)}
           />
-
-          {/* 경기대상 레이블 (좌측 정렬, 약간의 여백) */}
           <div style={{ textAlign: "left", marginTop: "1.5rem" }}>
             <span style={{ fontWeight: "normal" }}>경기대상</span>
           </div>
-          {/* 경기 대상 선택 영역 */}
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem" }}>
-            {/* 왼쪽: dummyMyTeam의 팀 아이콘 */}
             <div
               style={{
                 ...teamBoxStyle,
@@ -156,7 +146,6 @@ function DiaryNew() {
               />
             </div>
             <div style={{ fontSize: "1.25rem", fontWeight: "bold", alignSelf: "center" }}>VS</div>
-            {/* 오른쪽: 모달에서 선택된 팀 아이콘 */}
             <div
               style={{
                 ...teamBoxStyle,
@@ -179,12 +168,9 @@ function DiaryNew() {
               )}
             </div>
           </div>
-
           <div style={{ marginTop: "2rem" }}>
             <NextButton text="검색하기" bgColor="red" width="100%" onClick={handleSearch} />
           </div>
-
-          {/* 팀 선택 모달 */}
           {isTeamModalOpen && (
             <div style={modalOverlayStyle}>
               <div style={modalStyle}>
@@ -215,26 +201,17 @@ function DiaryNew() {
           )}
         </div>
       )}
-
       {view === "select" && (
         <div style={{ padding: "1rem" }}>
-          {/* 헤더에 경기 건수 표시 */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h2 style={{ fontSize: "1.125rem", fontWeight: "bold" }}>검색 결과</h2>
-            <span style={{ color: "red", fontWeight: "bold", fontSize: "1rem" }}>
-              {gameResults.length}건
-            </span>
+            <span style={{ color: "red", fontWeight: "bold", fontSize: "1rem" }}>{gameResults.length}건</span>
           </div>
-
-          {/* 경기 결과 카드 */}
           {gameResults.map((game) => {
-            // 점수 파싱
             const scores = game.score.split(" - ");
             const score1 = parseInt(scores[0]);
             const score2 = parseInt(scores[1]);
             const isTeam1Winner = score1 > score2;
-            // resultText는 제거합니다.
-
             return (
               <div
                 key={game.id}
@@ -245,18 +222,13 @@ function DiaryNew() {
                   padding: "1rem",
                   borderRadius: "0.75rem",
                   boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                  border:
-                    selectedGame && selectedGame.id === game.id
-                      ? "2px solid red"
-                      : "1px solid #E5E7EB",
+                  border: selectedGame && selectedGame.id === game.id ? "2px solid red" : "1px solid #E5E7EB",
                   marginBottom: "0.5rem",
                   cursor: "pointer",
                 }}
                 onClick={() => setSelectedGame(game)}
               >
-                {/* 경기 정보 컨테이너 */}
                 <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                  {/* 상단 날짜 & 장소 */}
                   <div
                     style={{
                       display: "flex",
@@ -269,22 +241,15 @@ function DiaryNew() {
                     <p>{game.date}</p>
                     <p>{game.location}</p>
                   </div>
-
-                  {/* 경기 내용 */}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    {/* 팀 1 (좌측) */}
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
                       <img
                         src={teamAssets[teamMapping[game.team1] as keyof typeof teamAssets]}
                         alt={game.team1}
                         style={{ width: "60px", height: "60px" }}
                       />
-                      <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>
-                        {game.team1}
-                      </p>
+                      <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{game.team1}</p>
                     </div>
-
-                    {/* 점수 표시 (승리/패배 텍스트 제거, 폰트 크기 확대) */}
                     <div
                       style={{
                         display: "flex",
@@ -300,25 +265,19 @@ function DiaryNew() {
                         <span style={{ fontWeight: !isTeam1Winner ? "800" : "400" }}>{score2}</span>
                       </p>
                     </div>
-
-                    {/* 팀 2 (우측) */}
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
                       <img
                         src={teamAssets[teamMapping[game.team2] as keyof typeof teamAssets]}
                         alt={game.team2}
                         style={{ width: "60px", height: "60px" }}
                       />
-                      <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>
-                        {game.team2}
-                      </p>
+                      <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{game.team2}</p>
                     </div>
                   </div>
                 </div>
               </div>
             );
           })}
-
-          {/* 하단 버튼 영역 - 버튼 순서 변경: 왼쪽 "이전", 오른쪽 "선택하기" */}
           <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
             <button
               style={{
@@ -355,21 +314,126 @@ function DiaryNew() {
           </div>
         </div>
       )}
-
       {view === "write" && selectedGame && (
         <div style={{ padding: "1rem" }}>
-          <h2 style={{ fontSize: "1.125rem", fontWeight: "bold" }}>일기 내용</h2>
-          <div style={{ border: "1px solid gray", padding: "0.5rem", marginTop: "0.5rem" }}>
-            <span>
-              {selectedGame.date} {selectedGame.location}
-            </span>
-            <span>
-              {selectedGame.team1} {selectedGame.score} {selectedGame.team2}
-            </span>
+          {/* 제목 변경 및 좌측 정렬 */}
+          <h2 style={{ fontSize: "1.125rem", fontWeight: "bold", textAlign: "left" }}>경기내용</h2>
+          {/* 경기 정보 카드 (search view와 동일한 UI, 항상 빨간 테두리) */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              backgroundColor: "white",
+              padding: "1rem",
+              borderRadius: "0.75rem",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+              border: "2px solid red",
+              marginBottom: "1rem",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  color: "#6B7280",
+                  fontSize: "0.875rem",
+                  marginBottom: "8px",
+                }}
+              >
+                <p>{selectedGame.date}</p>
+                <p>{selectedGame.location}</p>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+                  <img
+                    src={teamAssets[teamMapping[selectedGame.team1] as keyof typeof teamAssets]}
+                    alt={selectedGame.team1}
+                    style={{ width: "60px", height: "60px" }}
+                  />
+                  <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{selectedGame.team1}</p>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    flex: 1,
+                    textAlign: "center",
+                  }}
+                >
+                  {(() => {
+                    const scores = selectedGame.score.split(" - ");
+                    const score1 = parseInt(scores[0]);
+                    const score2 = parseInt(scores[1]);
+                    return (
+                      <p style={{ fontSize: "1.75rem", fontWeight: "bold" }}>
+                        <span style={{ fontWeight: score1 > score2 ? "800" : "400" }}>{score1}</span>
+                        {" - "}
+                        <span style={{ fontWeight: score1 > score2 ? "400" : "800" }}>{score2}</span>
+                      </p>
+                    );
+                  })()}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+                  <img
+                    src={teamAssets[teamMapping[selectedGame.team2] as keyof typeof teamAssets]}
+                    alt={selectedGame.team2}
+                    style={{ width: "60px", height: "60px" }}
+                  />
+                  <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{selectedGame.team2}</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div style={{ marginTop: "1rem" }}>
-            <label>경기를 보고 난 후 어땠나요?</label>
-            <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
+
+          {/* 일기내용 라벨 */}
+          <div style={{ marginBottom: "1rem" }}>
+            <p style={{ textAlign: "left", fontSize: "1rem", fontWeight: "bold" }}>일기내용</p>
+          </div>
+
+          {/* 직관/집관 선택 UI */}
+          <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+            <div
+              onClick={() => setAttendance("직관")}
+              style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+            >
+              <img
+                src={attendance === "직관" ? check : circle}
+                alt="직관"
+                style={{ width: "24px", height: "24px", marginRight: "0.5rem" }}
+              />
+              <p style={{ color: attendance === "직관" ? "#10B981" : "black", fontWeight: attendance === "직관" ? "bold" : "normal" }}>
+                직관
+              </p>
+            </div>
+            <div
+              onClick={() => setAttendance("집관")}
+              style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+            >
+              <img
+                src={attendance === "집관" ? check : circle}
+                alt="집관"
+                style={{ width: "24px", height: "24px", marginRight: "0.5rem" }}
+              />
+              <p style={{ color: attendance === "집관" ? "#10B981" : "black", fontWeight: attendance === "집관" ? "bold" : "normal" }}>
+                집관
+              </p>
+            </div>
+          </div>
+
+          {/* 감정 선택 UI (카드 안에 표시, 선택된 감정에만 빨간 테두리) */}
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "1rem",
+              borderRadius: "0.75rem",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+              border: "1px solid #E5E7EB",
+              marginBottom: "1rem",
+            }}
+          >
+            <div style={{ display: "flex", gap: "0.5rem" }}>
               {feelingAssets.map((feelingImg, index) => (
                 <img
                   key={index}
@@ -378,8 +442,7 @@ function DiaryNew() {
                   style={{
                     width: "3rem",
                     height: "3rem",
-                    padding: "0.25rem",
-                    border: feeling === index ? "2px solid red" : "2px solid gray",
+                    border: feeling === index ? "2px solid red" : "none",
                     cursor: "pointer",
                   }}
                   onClick={() => setFeeling(index)}
@@ -387,12 +450,26 @@ function DiaryNew() {
               ))}
             </div>
           </div>
-          <textarea
-            style={{ width: "100%", border: "1px solid gray", padding: "0.5rem", marginTop: "1rem" }}
-            placeholder="경기에 대한 감상평을 적어주세요."
-            value={review}
-            onChange={(e) => setReview(e.target.value)}
-          />
+
+          {/* 감상평 입력 영역 */}
+          <div>
+            <p style={{ textAlign: "left", fontSize: "1rem", fontWeight: "bold", marginBottom: "0.5rem" }}>나의 감상평</p>
+            <textarea
+              style={{
+                width: "100%",
+                border: "1px solid gray",
+                padding: "0.75rem",
+                marginTop: "0.5rem",
+                borderRadius: "8px",
+                minHeight: "150px",
+                resize: "vertical",
+              }}
+              placeholder="경기에 대한 감상평을 적어주세요."
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+            />
+          </div>
+
           <button
             style={{
               width: "100%",
@@ -404,11 +481,15 @@ function DiaryNew() {
               cursor: "pointer",
             }}
             onClick={() => {
-              // 전송된 데이터 로그 출력
+              if (!attendance) {
+                alert("직관/집관을 선택하세요");
+                return;
+              }
               console.log("전송된 데이터:", {
                 selectedDate,
                 selectedTeam,
                 selectedGame,
+                attendance,
                 feeling,
                 review,
               });
