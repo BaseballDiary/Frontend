@@ -6,7 +6,7 @@ import axios from "axios";
  */
 export const getMyClub = async (): Promise<string> => {
   try {
-    const response = await axios.get("http://3.39.169.50:8080/diary/fetchMyClub", {
+    const response = await axios.get("https://api.baseballdiary.shop/diary/fetchMyClub", {
       headers: {
         "Content-Type": "application/json",
       },
