@@ -3,11 +3,12 @@ import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaEllipsisH } from "react-icons/fa"; // ✅ 가로 점 3개 아이콘 사용
 import backButtonWhite from "../../assets/backButtonWhite.png";
+import heart from "../../assets/heart.png";
 
 const PostDetail = () => {
   const navigate = useNavigate();
-  const { postId } = useParams(); // ✅ URL에서 postId 가져오기
-  const [menuOpen, setMenuOpen] = useState<number | null>(null); // 현재 열린 메뉴의 ID 저장
+  const { postId } = useParams();
+  const [menuOpen, setMenuOpen] = useState<number | null>(null);
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([
     { id: 1, username: "사용자 이름", content: "댓글 내용입니다." },
@@ -21,92 +22,82 @@ const PostDetail = () => {
     }
   };
 
-    // ✅ 삭제 버튼 클릭 시 실행할 함수
-    const handleDelete = () => {
-      console.log(`게시글 ${postId} 삭제`);
-      setMenuOpen(null); // 삭제 후 메뉴 닫기
-    };
-
-  
+  const handleDelete = () => {
+    console.log(`게시글 ${postId} 삭제`);
+    setMenuOpen(null);
+  };
 
   return (
+    <Container onClick={() => setMenuOpen(null)}>
+      <Header>
+        <HeaderButton_back onClick={() => navigate(-1)}>
+          <BackIcon src={backButtonWhite} alt="뒤로가기" />
+        </HeaderButton_back>
+        <Title>게시글 {postId}</Title>
+      </Header>
 
-    <Container onClick={() => setMenuOpen(null)}> {/* ✅ 클릭하면 메뉴 닫힘 */}
-    {/* 상단 네비게이션 */}
-    <Header>
-      <HeaderButton_back onClick={() => navigate(-1)}>
-        <BackIcon src={backButtonWhite} alt="뒤로가기" />
-      </HeaderButton_back>
-      <Title>게시글 {postId}</Title>
-    </Header>
-
-    {/* 게시글 본문 */}
-    <PostContainer onClick={(e) => e.stopPropagation()}> {/* ✅ 메뉴 닫힘 방지 */}
-      <ProfileSection>
-        <ProfileImage>😀</ProfileImage>
-        <Username>사용자 이름</Username>
-        <PostTime>15분 전</PostTime>
-
-        {/* 점 3개 버튼 및 삭제 메뉴 */}
-        <PostActions>
-          <OptionsButton onClick={(e) => {
-            e.stopPropagation(); // ✅ 부모 컨테이너 클릭 이벤트 방지
-            setMenuOpen(menuOpen === Number(postId) ? null : Number(postId));
-          }}>
-            <FaEllipsisH size={18} />
-          </OptionsButton>
-
-          {/* 삭제 버튼 */}
-          {menuOpen === Number(postId) && (
-            <Menu>
-              <MenuItem className="delete" onClick={handleDelete}>
-                🗑 삭제하기
-              </MenuItem>
-            </Menu>
-          )}
-        </PostActions>
-      </ProfileSection>
-
-      <PostContent>
-        <PostText>
-          게시글 내용이 들어갑니다. 게시글 내용이 들어갑니다. 게시글 내용이 들어갑니다.
-        </PostText>
-        <PostMeta>
-          <Icon>💬</Icon>
-          <span>2</span>
-          <Icon>❤️</Icon>
-          <span>5</span>
-        </PostMeta>
-      </PostContent>
-    </PostContainer>
-
-    {/* 댓글 목록 */}
-    <CommentSection>
-      {comments.map((comment) => (
-        <Comment key={comment.id}>
+      <PostContainer onClick={(e) => e.stopPropagation()}>
+        <ProfileSection>
           <ProfileImage>😀</ProfileImage>
-          <CommentContent>
-            <Username>{comment.username}</Username>
-            <CommentText>{comment.content}</CommentText>
-          </CommentContent>
-        </Comment>
-      ))}
-    </CommentSection>
+          <UserInfo>
+            <Username>사용자 이름</Username>
+            <PostTime>15분 전</PostTime>
+          </UserInfo>
+          <PostActions>
+            <OptionsButton onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen(menuOpen === Number(postId) ? null : Number(postId));
+            }}>
+              <FaEllipsisH size={18} />
+            </OptionsButton>
+            {menuOpen === Number(postId) && (
+              <Menu>
+                <MenuItem onClick={handleDelete}>🗑 삭제하기</MenuItem>
+              </Menu>
+            )}
+          </PostActions>
+        </ProfileSection>
+        <PostContent>
+          <PostText>게시글 내용이 들어갑니다.</PostText>
+          <PostMeta>
+            <Icon>💬</Icon>
+            <span>2</span>
+            <Icon>❤️</Icon>
+            <span>5</span>
+          </PostMeta>
+        </PostContent>
+      </PostContainer>
 
-    {/* 댓글 입력란 */}
-    <CommentInputContainer>
-      <CommentInput
-        type="text"
-        placeholder="댓글을 입력하세요..."
-        value={commentText}
-        onChange={(e) => setCommentText(e.target.value)}
-      />
-      <SendButton onClick={() => setComments([...comments, { id: Date.now(), username: "나", content: commentText }])}>
-        게시
-      </SendButton>
-    </CommentInputContainer>
-  </Container>
-);
+      <CommentSection>
+        {comments.map((comment) => (
+          <CommentContainer key={comment.id}>
+            <ProfileImageSmall>😀</ProfileImageSmall>
+            <CommentContent>
+              <CommentHeader>
+                <Username>{comment.username}</Username>
+                <CommentTime>15분 전</CommentTime>
+              </CommentHeader>
+              <CommentText>{comment.content}</CommentText>
+              <CommentActions>
+                <Icon>💬</Icon>
+                <span>28</span>
+              </CommentActions>
+            </CommentContent>
+          </CommentContainer>
+        ))}
+      </CommentSection>
+
+      <CommentInputContainer>
+        <CommentInput
+          type="text"
+          placeholder="댓글을 입력하세요..."
+          value={commentText}
+          onChange={(e) => setCommentText(e.target.value)}
+        />
+        <SendButton onClick={handleAddComment}>게시</SendButton>
+      </CommentInputContainer>
+    </Container>
+  );
 };
 
 export default PostDetail;
@@ -181,6 +172,9 @@ const ProfileImage = styled.div`
 `;
 
 const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-left: 10px;
   flex: 1;
 `;
@@ -219,6 +213,26 @@ const CommentContent = styled.div`
   flex: 1;
 `;
 
+const CommentContainer = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+`;
+
+const ProfileImageSmall = styled(ProfileImage)`
+  width: 30px;
+  height: 30px;
+`;
+
+const CommentTime = styled.div`
+  font-size: 12px;
+  color: #999;
+`;
+
+
+
 const CommentText = styled.div`
   font-size: 14px;
   color: #333;
@@ -227,7 +241,7 @@ const CommentText = styled.div`
 /* 🔹 댓글 입력란 스타일 조정 */
 const CommentInputContainer = styled.div`
   position: fixed;
-  bottom: 0;
+  bottom: 60px;
   width: 100%;
   background: white;
   padding: 10px;
@@ -244,6 +258,13 @@ const CommentInput = styled.input`
   border-radius: 20px;
   outline: none;
 `;
+
+const CommentHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`;
+
 
 // 📌 옵션 메뉴 (점 3개 버튼)
 const OptionsButton = styled.button`
@@ -280,6 +301,15 @@ const Title = styled.h2`
   font-size: 18px;
   flex: 1;
   text-align: center;
+`;
+
+
+const ReplyButton = styled.button`
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 12px;
 `;
 
 const SendButton = styled.button`
@@ -327,4 +357,15 @@ const PostMeta = styled.div`
 const Icon = styled.span`
   font-size: 14px;
 `;
+
+const CommentActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #999;
+`;
+
+
 
