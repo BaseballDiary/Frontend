@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import lotte from "../../assets/team/lotte.png";
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
+
 
 interface Team {
   rank: number;
@@ -20,12 +24,14 @@ const teamData: Team[] = Array(10).fill({
   draws: 2,
   losses: 55,
   winRate: 0.573,
-  logo: "/giants-logo.png",
+  logo: lotte,
 });
 
 const TeamRanking = () => {
   const [selectedYear, setSelectedYear] = useState("2024");
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  const [selectedTab, setSelectedTab] = useState("schedule");
+  const navigate = useNavigate(); 
 
   return (
     <Container>
@@ -36,13 +42,15 @@ const TeamRanking = () => {
 
       {/* 탭 메뉴 */}
       <TabContainer>
-        <Tab>
-          <a href="/playinfo">경기 일정</a>
-        </Tab>
-        <Tab active>팀 순위</Tab>
-        <Tab>
-          <a href="/player-ranking">개인 순위</a>
-        </Tab>
+      <Tab $active={location.pathname === "/game/schedule"} onClick={() => navigate("/game/schedule")}>
+  경기 일정
+</Tab>
+<Tab $active={location.pathname === "/game/team-ranking"} onClick={() => navigate("/game/team-ranking")}>
+  팀 순위
+</Tab>
+<Tab $active={location.pathname === "/game/player-ranking"} onClick={() => navigate("/game/player-ranking")}>
+  개인 순위
+</Tab>
       </TabContainer>
 
       {/* 연도 선택 */}
@@ -89,15 +97,11 @@ const TeamRanking = () => {
         </tbody>
       </Table>
 
-      {/* 하단 네비게이션 바 */}
-      <BottomNav>
-        <NavItem active>경기정보</NavItem>
-        <NavItem>커뮤니티</NavItem>
-        <NavItem>야구일기</NavItem>
-        <NavItem>더보기</NavItem>
-      </BottomNav>
+    
     </Container>
   );
+  console.log("현재 선택된 탭:", selectedTab);
+
 };
 
 export default TeamRanking;
@@ -109,6 +113,8 @@ const Container = styled.div`
   align-items: center;
   background: #fff;
   height: 100vh;
+  overflow-y: auto;
+  padding-top: 100px; /* 👈 헤더(50px) + 탭(40px) 높이 만큼 패딩 추가 */
 `;
 
 const Header = styled.div`
@@ -118,6 +124,10 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
 `;
 
 const Title = styled.h2`
@@ -129,17 +139,25 @@ const TabContainer = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-around;
-  border-bottom: 2px solid #ddd;
+  position: fixed;
+  top: 50px;
+  left: 1px;
+  background: white;
+  z-index: 99;
 `;
 
-const Tab = styled.div<{ active?: boolean }>`
+const Tab = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "$active", // ✅ active가 DOM으로 전달되지 않도록 차단
+})<{ $active?: boolean }>`  // 🔹 속성명을 "$active"로 변경하여 스타일에서만 사용
   flex: 1;
   text-align: center;
   padding: 10px;
-  color: ${({ active }) => (active ? "#f8223b" : "#999")};
-  font-weight: ${({ active }) => (active ? "bold" : "normal")};
-  border-bottom: ${({ active }) => (active ? "3px solid #f8223b" : "none")};
+  cursor: pointer;
+  color: ${({ $active }) => ($active ? "#f8223b" : "#999")};
+  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
+  border-bottom: ${({ $active }) => ($active ? "3px solid #f8223b" : "none")};
 `;
+
 
 const YearSelector = styled.div`
   margin: 10px 0;
@@ -160,11 +178,14 @@ const Table = styled.table`
   }
 `;
 
-const TableRow = styled.tr<{ active?: boolean }>`
+const TableRow = styled.tr.withConfig({
+  shouldForwardProp: (prop) => prop !== "active",
+})<{ active?: boolean }>`
   background: ${({ active }) => (active ? "#f8223b" : "#fff")};
   color: ${({ active }) => (active ? "white" : "black")};
   cursor: pointer;
 `;
+
 
 const TeamInfo = styled.div`
   display: flex;
@@ -177,19 +198,4 @@ const TeamLogo = styled.img`
   margin-right: 5px;
 `;
 
-const BottomNav = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-  background: white;
-  border-top: 1px solid #ddd;
-  padding: 10px 0;
-  position: fixed;
-  bottom: 0;
-`;
 
-const NavItem = styled.div<{ active?: boolean }>`
-  font-size: 14px;
-  color: ${({ active }) => (active ? "#f8223b" : "#666")};
-  font-weight: ${({ active }) => (active ? "bold" : "normal")};
-`;
