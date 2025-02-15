@@ -19,7 +19,6 @@ import NextButton from "../components/Next-button";
 
 const teamAssets = { lotte, doosan, samsung, kiwoom, hanhwa, kia, kt, nc, lg, ssg, kbo };
 const feelingAssets = [feeling1, feeling2, feeling3, feeling4, feeling5];
-// 수정: dummyMyTeam을 문자열 "hanhwa"로 수정하여 teamAssets의 해당 key를 사용
 const dummyMyTeam = "hanhwa";
 
 const dummyGames = [
@@ -38,10 +37,10 @@ function DiaryNew() {
   const [feeling, setFeeling] = useState<number | null>(null);
   const [review, setReview] = useState("");
 
-  // === 팀 선택 모달 상태 관리 ===
+  // 팀 선택 모달 상태 관리
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
 
-  // === teamBoxStyle 정의 (오류 해결) ===
+  // teamBoxStyle 정의
   const teamBoxStyle = {
     flex: 1,
     border: "1px solid gray",
@@ -51,7 +50,7 @@ function DiaryNew() {
     borderRadius: "8px",
   };
 
-  // === 모달 관련 스타일 정의 ===
+  // 모달 관련 스타일 정의
   const modalOverlayStyle = {
     position: "fixed" as const,
     top: 0,
@@ -65,7 +64,7 @@ function DiaryNew() {
     zIndex: 1000,
   };
 
-  // 수정: 팀선택 모달의 크기를 늘림 (maxWidth: "600px")
+  // 수정: 모달 크기를 늘림 (maxWidth: "600px")
   const modalStyle = {
     backgroundColor: "white",
     padding: "1rem",
@@ -109,14 +108,14 @@ function DiaryNew() {
       </header>
       {view === "search" && (
         <div style={{ padding: "1rem" }}>
-          {/* 수정: "경기 검색" 제목을 좌측 정렬 */}
+          {/* 경기 검색 제목 좌측 정렬 */}
           <h2 style={{ fontSize: "1.125rem", fontWeight: "bold", textAlign: "left" }}>경기 검색</h2>
 
-          {/* 수정: 날짜 입력 위에 "경기날짜" 레이블 추가 (굵지 않고 좌측 정렬) */}
+          {/* 경기날짜 레이블 (굵지 않게, 좌측 정렬) */}
           <div style={{ textAlign: "left", marginTop: "1rem" }}>
             <span style={{ fontWeight: "normal" }}>경기날짜</span>
           </div>
-          {/* 수정: 날짜 선택 input의 너비를 90%로 축소 */}
+          {/* 날짜 선택 input의 너비 축소 */}
           <input
             type="date"
             style={{
@@ -129,18 +128,18 @@ function DiaryNew() {
             onChange={(e) => setSelectedDate(e.target.value)}
           />
 
-          {/* 수정: 팀 선택 영역 위에 "경기대상" 레이블 추가 (좌측 정렬, 여백 추가) */}
+          {/* 경기대상 레이블 (좌측 정렬, 약간의 여백) */}
           <div style={{ textAlign: "left", marginTop: "1.5rem" }}>
             <span style={{ fontWeight: "normal" }}>경기대상</span>
           </div>
-          {/* 경기 대상 선택 */}
+          {/* 경기 대상 선택 영역 */}
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem" }}>
-            {/* 수정: dummyMyTeam 박스의 크기를 키우고, teamAssets의 hanhwa 이미지를 표시 */}
+            {/* 왼쪽: dummyMyTeam의 팀 아이콘 */}
             <div
               style={{
                 ...teamBoxStyle,
                 width: "80px",
-                height: "80px",
+                height: "150px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -153,14 +152,33 @@ function DiaryNew() {
               />
             </div>
             <div style={{ fontSize: "1.25rem", fontWeight: "bold", alignSelf: "center" }}>VS</div>
-            <div style={teamBoxStyle} onClick={() => setIsTeamModalOpen(true)}>
-              {selectedTeam ? selectedTeam : "선택해주세요"}
+            {/* 오른쪽: 모달에서 선택된 팀이 있으면 해당 팀의 아이콘을 보여줌 */}
+            <div
+              style={{
+                ...teamBoxStyle,
+                width: "80px",
+                height: "150px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onClick={() => setIsTeamModalOpen(true)}
+            >
+              {selectedTeam ? (
+                <img
+                  src={teamAssets[selectedTeam as keyof typeof teamAssets]}
+                  alt={selectedTeam}
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                />
+              ) : (
+                "선택해주세요"
+              )}
             </div>
           </div>
 
-          {/* 검색 버튼 (공용 컴포넌트 적용) */}
-          <NextButton text="검색하기" bgColor="red" width="100%" onClick={handleSearch} />
-
+          <div style={{ marginTop: "2rem" }}>
+            <NextButton text="검색하기" bgColor="red" width="100%" onClick={handleSearch} />
+          </div>
           {/* 팀 선택 모달 */}
           {isTeamModalOpen && (
             <div style={modalOverlayStyle}>
@@ -282,7 +300,17 @@ function DiaryNew() {
               border: "none",
               cursor: "pointer",
             }}
-            onClick={() => alert("데이터 전송")}
+            onClick={() => {
+              // 전송된 데이터 로그 출력
+              console.log("전송된 데이터:", {
+                selectedDate,
+                selectedTeam,
+                selectedGame,
+                feeling,
+                review,
+              });
+              alert("전송되었습니다");
+            }}
           >
             작성하기
           </button>
