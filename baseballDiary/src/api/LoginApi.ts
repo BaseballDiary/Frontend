@@ -4,7 +4,7 @@ import axios from "axios";
 export const login = async (email: string, password: string): Promise<any> => {
   try {
     const response = await axios.post(
-      "http://3.39.169.50:8080/login", // 백엔드 로그인 엔드포인트 (URL 필요시 수정)
+      "https://api.baseballdiary.shop/login", // 백엔드 로그인 엔드포인트 (URL 필요시 수정)
       { email, password }, // 요청 바디에 email과 password 전달
       {
         headers: {
