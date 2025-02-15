@@ -28,10 +28,17 @@ const dummyGames = [
   { id: 4, date: "25.01.45", team1: "한화", team2: "롯데", score: "5 - 11", location: "잠실" }
 ];
 
+// 팀 이름(한글)을 teamAssets의 키(영문)로 매핑
+const teamMapping: { [key: string]: string } = {
+  "한화": "hanhwa",
+  "롯데": "lotte",
+};
+
 function DiaryNew() {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [gameResults, setGameResults] = useState<typeof dummyGames>([]);
+  // 선택한 게임은 select view에서 카드 터치 시 저장됨
   const [selectedGame, setSelectedGame] = useState<typeof dummyGames[number] | null>(null);
   const [view, setView] = useState("search"); // search, select, write
   const [feeling, setFeeling] = useState<number | null>(null);
@@ -75,12 +82,9 @@ function DiaryNew() {
 
   const handleSearch = () => {
     setGameResults(dummyGames);
+    // 초기에는 선택된 게임이 없도록 함
+    setSelectedGame(null);
     setView("select");
-  };
-
-  const handleSelectGame = (game: typeof dummyGames[number]) => {
-    setSelectedGame(game);
-    setView("write");
   };
 
   return (
@@ -152,7 +156,7 @@ function DiaryNew() {
               />
             </div>
             <div style={{ fontSize: "1.25rem", fontWeight: "bold", alignSelf: "center" }}>VS</div>
-            {/* 오른쪽: 모달에서 선택된 팀이 있으면 해당 팀의 아이콘을 보여줌 */}
+            {/* 오른쪽: 모달에서 선택된 팀 아이콘 */}
             <div
               style={{
                 ...teamBoxStyle,
@@ -179,6 +183,7 @@ function DiaryNew() {
           <div style={{ marginTop: "2rem" }}>
             <NextButton text="검색하기" bgColor="red" width="100%" onClick={handleSearch} />
           </div>
+
           {/* 팀 선택 모달 */}
           {isTeamModalOpen && (
             <div style={modalOverlayStyle}>
@@ -212,49 +217,147 @@ function DiaryNew() {
       )}
 
       {view === "select" && (
-        <div>
-          <h2 style={{ fontSize: "1.125rem", fontWeight: "bold" }}>검색 결과</h2>
-          {gameResults.map((game) => (
-            <div
-              key={game.id}
+        <div style={{ padding: "1rem" }}>
+          {/* 헤더에 경기 건수 표시 */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h2 style={{ fontSize: "1.125rem", fontWeight: "bold" }}>검색 결과</h2>
+            <span style={{ color: "red", fontWeight: "bold", fontSize: "1rem" }}>
+              {gameResults.length}건
+            </span>
+          </div>
+
+          {/* 경기 결과 카드 */}
+          {gameResults.map((game) => {
+            // 점수 파싱
+            const scores = game.score.split(" - ");
+            const score1 = parseInt(scores[0]);
+            const score2 = parseInt(scores[1]);
+            const isTeam1Winner = score1 > score2;
+            // resultText는 제거합니다.
+
+            return (
+              <div
+                key={game.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  backgroundColor: "white",
+                  padding: "1rem",
+                  borderRadius: "0.75rem",
+                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  border:
+                    selectedGame && selectedGame.id === game.id
+                      ? "2px solid red"
+                      : "1px solid #E5E7EB",
+                  marginBottom: "0.5rem",
+                  cursor: "pointer",
+                }}
+                onClick={() => setSelectedGame(game)}
+              >
+                {/* 경기 정보 컨테이너 */}
+                <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                  {/* 상단 날짜 & 장소 */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      color: "#6B7280",
+                      fontSize: "0.875rem",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    <p>{game.date}</p>
+                    <p>{game.location}</p>
+                  </div>
+
+                  {/* 경기 내용 */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    {/* 팀 1 (좌측) */}
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+                      <img
+                        src={teamAssets[teamMapping[game.team1] as keyof typeof teamAssets]}
+                        alt={game.team1}
+                        style={{ width: "60px", height: "60px" }}
+                      />
+                      <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>
+                        {game.team1}
+                      </p>
+                    </div>
+
+                    {/* 점수 표시 (승리/패배 텍스트 제거, 폰트 크기 확대) */}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        flex: 1,
+                        textAlign: "center",
+                      }}
+                    >
+                      <p style={{ fontSize: "1.75rem", fontWeight: "bold" }}>
+                        <span style={{ fontWeight: isTeam1Winner ? "800" : "400" }}>{score1}</span>
+                        {" - "}
+                        <span style={{ fontWeight: !isTeam1Winner ? "800" : "400" }}>{score2}</span>
+                      </p>
+                    </div>
+
+                    {/* 팀 2 (우측) */}
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+                      <img
+                        src={teamAssets[teamMapping[game.team2] as keyof typeof teamAssets]}
+                        alt={game.team2}
+                        style={{ width: "60px", height: "60px" }}
+                      />
+                      <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>
+                        {game.team2}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* 하단 버튼 영역 - 버튼 순서 변경: 왼쪽 "이전", 오른쪽 "선택하기" */}
+          <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+            <button
               style={{
-                border: "1px solid gray",
+                flex: 1,
+                backgroundColor: "red",
+                color: "white",
                 padding: "0.5rem",
-                marginTop: "0.5rem",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
+                border: "none",
                 cursor: "pointer",
               }}
-              onClick={() => handleSelectGame(game)}
+              onClick={() => setView("search")}
             >
-              <span>
-                {game.date} {game.location}
-              </span>
-              <span>
-                {game.team1} {game.score} {game.team2}
-              </span>
-            </div>
-          ))}
-          <button
-            style={{
-              width: "100%",
-              backgroundColor: "red",
-              color: "white",
-              padding: "0.5rem",
-              marginTop: "1rem",
-              border: "none",
-              cursor: "pointer",
-            }}
-            onClick={() => setView("search")}
-          >
-            변경
-          </button>
+              이전
+            </button>
+            <button
+              style={{
+                flex: 1,
+                backgroundColor: "red",
+                color: "white",
+                padding: "0.5rem",
+                border: "none",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                if (selectedGame) {
+                  setView("write");
+                } else {
+                  alert("경기를 선택해주세요");
+                }
+              }}
+            >
+              선택하기
+            </button>
+          </div>
         </div>
       )}
 
       {view === "write" && selectedGame && (
-        <div>
+        <div style={{ padding: "1rem" }}>
           <h2 style={{ fontSize: "1.125rem", fontWeight: "bold" }}>일기 내용</h2>
           <div style={{ border: "1px solid gray", padding: "0.5rem", marginTop: "0.5rem" }}>
             <span>
