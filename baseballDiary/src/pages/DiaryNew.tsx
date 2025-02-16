@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import lotte from "../assets/team/lotte.png";
 import doosan from "../assets/team/doosan.png";
 import samsung from "../assets/team/samsung.png";
@@ -23,21 +24,23 @@ import NextButton from "../components/Next-button";
 const teamAssets = { lotte, doosan, samsung, kiwoom, hanhwa, kia, kt, nc, lg, ssg, kbo };
 // 한글 팀 이름 매핑 (kbo 제외)
 const teamNames: { [key: string]: string } = {
-  lotte: "롯데",
-  doosan: "두산",
-  samsung: "삼성",
-  kiwoom: "키움",
-  hanhwa: "한화",
-  kia: "기아",
-  kt: "KT",
-  nc: "NC",
-  lg: "LG",
-  ssg: "SSG",
+  lotte: "롯데 자이언츠",
+  doosan: "두산 베어스",
+  samsung: "삼성 라이온즈",
+  kiwoom: "키움 히어로즈",
+  hanhwa: "한화 이글즈",
+  kia: "KIA 타이거즈",
+  kt: "Kt wiz",
+  nc: "NC 다이노스",
+  lg: "LG 트윈스",
+  ssg: "SSG 랜더스",
 };
+// 내 팀(dummyMyTeam)과 매핑 (검색 view의 왼쪽에 내 팀을 표시할 때 사용)
 const teamMapping: { [key: string]: string } = {
   "한화": "hanhwa",
   "롯데": "lotte",
 };
+
 const feelingAssets = [feeling1, feeling2, feeling3, feeling4, feeling5];
 const dummyMyTeam = "hanhwa";
 
@@ -49,6 +52,7 @@ const dummyGames = [
 ];
 
 function DiaryNew() {
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [gameResults, setGameResults] = useState<typeof dummyGames>([]);
@@ -57,8 +61,6 @@ function DiaryNew() {
   const [feeling, setFeeling] = useState<number | null>(null);
   const [review, setReview] = useState("");
   const [attendance, setAttendance] = useState<string | null>(null);
-
-  // 팀 선택 모달 상태 관리
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
 
   const teamBoxStyle = {
@@ -150,6 +152,7 @@ function DiaryNew() {
             <span style={{ fontWeight: "normal" }}>경기대상</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem" }}>
+            {/* 내 팀은 왼쪽에 항상 표시 */}
             <div
               style={{
                 ...teamBoxStyle,
@@ -167,6 +170,7 @@ function DiaryNew() {
               />
             </div>
             <div style={{ fontSize: "1.25rem", fontWeight: "bold", alignSelf: "center" }}>VS</div>
+            {/* 팀 모달에서 선택한 팀 (내 팀과 같으면 선택할 수 없음) */}
             <div
               style={{
                 ...teamBoxStyle,
@@ -205,7 +209,7 @@ function DiaryNew() {
                   }}
                 >
                   {Object.keys(teamAssets)
-                    .filter((team) => team !== "kbo")
+                    .filter((team) => team !== "kbo" && team !== dummyMyTeam)
                     .map((team) => (
                       <div
                         key={team}
@@ -260,10 +264,7 @@ function DiaryNew() {
                   padding: "1rem",
                   borderRadius: "0.75rem",
                   boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                  border:
-                    selectedGame && selectedGame.id === game.id
-                      ? "2px solid red"
-                      : "1px solid #E5E7EB",
+                  border: selectedGame && selectedGame.id === game.id ? "2px solid red" : "1px solid #E5E7EB",
                   marginBottom: "0.5rem",
                   cursor: "pointer",
                 }}
@@ -501,6 +502,7 @@ function DiaryNew() {
                   review,
                 });
                 alert("전송되었습니다");
+                navigate("/diary"); // 작성 후 /diary로 이동
               }}
             />
           </div>
