@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaEdit } from "react-icons/fa";
+import styled from "styled-components";
+
 // 팀 로고 import
 import lotte from "../assets/team/lotte.png";
 import doosan from "../assets/team/doosan.png";
@@ -15,14 +17,30 @@ import ssg from "../assets/team/ssg.png";
 import kbo from "../assets/team/KBO.png";
 
 // 감정 icon import
-import feeling1 from "../assets/feeling/feeling1.svg"
-import feeling2 from "../assets/feeling/feeling2.svg"
-import feeling3 from "../assets/feeling/feeling3.svg"
-import feeling4 from "../assets/feeling/feeling4.svg"
-import feeling5 from "../assets/feeling/feeling5.svg"
+import feeling1 from "../assets/feeling/feeling1.svg";
+import feeling2 from "../assets/feeling/feeling2.svg";
+import feeling3 from "../assets/feeling/feeling3.svg";
+import feeling4 from "../assets/feeling/feeling4.svg";
+import feeling5 from "../assets/feeling/feeling5.svg";
 
+// Styled WriteButton: 항상 보이는 글쓰기 버튼
+const WriteButton = styled.button`
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: #f8223b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+`;
 
-// 팀 로고 매핑
 const teamLogos: { [key: string]: string } = {
   Lotte: lotte,
   Doosan: doosan,
@@ -34,9 +52,8 @@ const teamLogos: { [key: string]: string } = {
   NC: nc,
   LG: lg,
   SSG: ssg,
-  KBO: kbo, // 기본 로고
+  KBO: kbo,
 };
-
 
 interface GameRecord {
   id: number;
@@ -50,26 +67,26 @@ interface GameRecord {
 const Diary = () => {
   const navigate = useNavigate();
   const [gameRecords, setGameRecords] = useState<GameRecord[]>([]);
-  const [selectedYear, setSelectedYear] = useState(2024); // 연도 선택
+  const [selectedYear, setSelectedYear] = useState(2024);
 
   // 데이터 로드 (향후 API 연동을 고려)
   useEffect(() => {
     const fetchGameRecords = async () => {
-        try {
-          const data: GameRecord[] = [
-            { id: 1, result: "승리", score: "11 - 5", team1: "Hanwha", team2: "Lotte", feeling: 3 },
-            { id: 2, result: "패배", score: "5 - 11", team1: "Samsung", team2: "Doosan", feeling: 1 },
-            { id: 3, result: "승리", score: "11 - 5", team1: "Kia", team2: "KT", feeling: 5 },
-            { id: 4, result: "승리", score: "11 - 5", team1: "NC", team2: "LG", feeling: 2 },
-          ];
-          setGameRecords(data);
-        } catch (error) {
-          console.error("데이터 불러오기 실패", error);
-        }
-      };
+      try {
+        const data: GameRecord[] = [
+          { id: 1, result: "승리", score: "11 - 5", team1: "Hanwha", team2: "Lotte", feeling: 3 },
+          { id: 2, result: "패배", score: "5 - 11", team1: "Samsung", team2: "Doosan", feeling: 1 },
+          { id: 3, result: "승리", score: "11 - 5", team1: "Kia", team2: "KT", feeling: 5 },
+          { id: 4, result: "승리", score: "11 - 5", team1: "NC", team2: "LG", feeling: 2 },
+        ];
+        setGameRecords(data);
+      } catch (error) {
+        console.error("데이터 불러오기 실패", error);
+      }
+    };
 
     fetchGameRecords();
-  }, [selectedYear]); // 연도 변경 시 데이터 갱신
+  }, [selectedYear]);
 
   return (
     <div
@@ -78,7 +95,7 @@ const Diary = () => {
         minHeight: "100vh",
         color: "black",
         position: "relative",
-        paddingBottom: "4rem", // FAB 버튼이 떠있을 공간 확보
+        paddingBottom: "4rem",
       }}
     >
       {/* Header */}
@@ -181,115 +198,88 @@ const Diary = () => {
       </div>
 
       {/* Game List */}
-<div style={{ padding: "1rem" }}>
-  {gameRecords.map((game) => {
-    // 점수 비교해서 승리한 팀 결정
-    const [score1, score2] = game.score.split(" - ").map(Number);
-    const isTeam1Winner = score1 > score2;
+      <div style={{ padding: "1rem" }}>
+        {gameRecords.map((game) => {
+          const [score1, score2] = game.score.split(" - ").map(Number);
+          const isTeam1Winner = score1 > score2;
+          const feelingIcons: { [key: number]: string } = {
+            1: feeling1,
+            2: feeling2,
+            3: feeling3,
+            4: feeling4,
+            5: feeling5,
+          };
 
-    // feeling 값에 따라 아이콘 매핑
-    const feelingIcons: { [key: number]: string } = {
-      1: feeling1,
-      2: feeling2,
-      3: feeling3,
-      4: feeling4,
-      5: feeling5,
-    };
-
-    return (
-      <div
-        key={game.id}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          backgroundColor: "white",
-          padding: "1rem",
-          borderRadius: "0.75rem",
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-          border: "1px solid #E5E7EB",
-          marginBottom: "0.5rem",
-        }}
-      >
-        {/* 왼쪽 아이콘 (feeling 아이콘) */}
-        <img
-          src={feelingIcons[game.feeling] || feeling1} // 기본값 feeling1
-          alt="feeling icon"
-          style={{ width: "48px", height: "48px", marginRight: "12px" }}
-        />
-
-        {/* 경기 정보 컨테이너 */}
-        <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-          {/* 상단 날짜 & 장소 */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              color: "#6B7280",
-              fontSize: "0.875rem",
-              marginBottom: "8px",
-            }}
-          >
-            <p>01.45(수) 18:00</p>
-            <p>잠실</p>
-          </div>
-
-          {/* 경기 내용 */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            {/* 팀 1 (좌측) */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+          return (
+            <div
+              key={game.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                backgroundColor: "white",
+                padding: "1rem",
+                borderRadius: "0.75rem",
+                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                border: "1px solid #E5E7EB",
+                marginBottom: "0.5rem",
+              }}
+            >
               <img
-                src={teamLogos["Hanwha"]}
-                alt="Hanwha"
-                style={{ width: "40px", height: "40px" }}
+                src={feelingIcons[game.feeling] || feeling1}
+                alt="feeling icon"
+                style={{ width: "48px", height: "48px", marginRight: "12px" }}
               />
-              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>한화</p>
+              <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    color: "#6B7280",
+                    fontSize: "0.875rem",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <p>01.45(수) 18:00</p>
+                  <p>잠실</p>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+                    <img
+                      src={teamLogos["Hanwha"]}
+                      alt="Hanwha"
+                      style={{ width: "40px", height: "40px" }}
+                    />
+                    <p style={{ fontSize: "0.875rem", marginTop: "4px", fontWeight: "bold" }}>한화</p>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, textAlign: "center" }}>
+                    <p style={{ fontWeight: "bold", color: game.result === "승리" ? "#10B981" : "#EF4444" }}>
+                      {game.result}
+                    </p>
+                    <p style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
+                      <span style={{ fontWeight: isTeam1Winner ? "800" : "400" }}>{score1}</span>
+                      {" - "}
+                      <span style={{ fontWeight: !isTeam1Winner ? "800" : "400" }}>{score2}</span>
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+                    <img
+                      src={teamLogos["Lotte"]}
+                      alt="Lotte"
+                      style={{ width: "40px", height: "40px" }}
+                    />
+                    <p style={{ fontSize: "0.875rem", marginTop: "4px", fontWeight: "bold" }}>롯데</p>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            {/* 경기 결과 */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, textAlign: "center" }}>
-              <p style={{ fontWeight: "bold", color: game.result === "승리" ? "#10B981" : "#EF4444" }}>
-                {game.result}
-              </p>
-              <p style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
-                <span style={{ fontWeight: isTeam1Winner ? "800" : "400" }}>{score1}</span>
-                {" - "}
-                <span style={{ fontWeight: !isTeam1Winner ? "800" : "400" }}>{score2}</span>
-              </p>
-            </div>
-
-            {/* 팀 2 (우측) */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
-              <img
-                src={teamLogos["Lotte"]}
-                alt="Lotte"
-                style={{ width: "40px", height: "40px" }}
-              />
-              <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>롯데</p>
-            </div>
-          </div>
-        </div>
+          );
+        })}
       </div>
-    );
-  })}
-</div>
 
-      {/* Floating Action Button */}
-      <button
-        style={{
-          position: "fixed",
-          bottom: "2rem",
-          right: "2rem",
-          backgroundColor: "#EF4444",
-          color: "white",
-          padding: "1rem",
-          borderRadius: "50%",
-          boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
-          cursor: "pointer",
-        }}
-        onClick={() => navigate("/diary/new")}
-      >
-        <FaPlus size={24} />
-      </button>
+      {/* WriteButton: 글쓰기 버튼 항상 보이도록 */}
+      <WriteButton onClick={() => navigate("/diary/new")}>
+        <FaEdit size={24} color="white" />
+      </WriteButton>
     </div>
   );
 };
