@@ -41,18 +41,25 @@ const WriteButton = styled.button`
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
-// Styled Tabs for 직관/집관
-const TabContainer = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-  top: 50px; /* 필요시 위치 조정 */
+// FixedTopContainer: 헤더부터 직관/집관 탭까지 고정
+const FixedTopContainer = styled.div`
+  position: fixed;
+  top: 0;
   left: 0;
+  width: 100%;
   background: white;
   z-index: 99;
-  padding: 10px 0;
 `;
 
+// Styled TabContainer (고정 영역 내부에 포함)
+const TabContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-bottom: 1px solid #E5E7EB;
+`;
+
+// Styled Tab (active 상태에 따라 스타일 변경)
 const Tab = styled.div<{ $active?: boolean }>`
   flex: 1;
   text-align: center;
@@ -79,7 +86,6 @@ const teamLogos: { [key: string]: string } = {
   KBO: kbo,
 };
 
-// 인터페이스에 attendance 필드 추가
 interface GameRecord {
   id: number;
   result: "승리" | "패배";
@@ -126,7 +132,9 @@ const Diary = () => {
     setGameRecords(dummyGames);
   }, [selectedYear]);
 
-  const filteredRecords = gameRecords.filter(record => record.attendance === activeAttendance);
+  const filteredRecords = gameRecords.filter(
+    (record) => record.attendance === activeAttendance
+  );
 
   return (
     <div
@@ -138,93 +146,106 @@ const Diary = () => {
         paddingBottom: "4rem",
       }}
     >
-      {/* Header */}
-      <header
-        style={{
-          backgroundColor: "#EF4444",
-          color: "white",
-          textAlign: "center",
-          padding: "1rem",
-          fontSize: "1.25rem",
-          fontWeight: "bold",
-        }}
-      >
-        야구일기
-      </header>
+      {/* 고정된 상단 영역: Header, Year Tabs, Statistics, 직관/집관 탭 */}
+      <FixedTopContainer>
+        {/* Header */}
+        <header
+          style={{
+            backgroundColor: "#EF4444",
+            color: "white",
+            textAlign: "center",
+            padding: "1rem",
+            fontSize: "1.25rem",
+            fontWeight: "bold",
+          }}
+        >
+          야구일기
+        </header>
 
-      {/* Year Tabs */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "1rem",
-          borderBottom: "1px solid #E5E7EB",
-        }}
-      >
-        {[2024, 2023, 2022, 2021, 2020].map((year) => (
-          <button
-            key={year}
-            onClick={() => setSelectedYear(year)}
+        {/* Year Tabs */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "1rem",
+            borderBottom: "1px solid #E5E7EB",
+          }}
+        >
+          {[2024, 2023, 2022, 2021, 2020].map((year) => (
+            <button
+              key={year}
+              onClick={() => {
+                setSelectedYear(year);
+              }}
+              style={{
+                padding: "0.5rem 1rem",
+                borderRadius: "0.375rem",
+                backgroundColor: year === selectedYear ? "#EF4444" : "transparent",
+                color: year === selectedYear ? "white" : "#6B7280",
+                fontWeight: "bold",
+                transition: "background 0.3s",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              {year}
+            </button>
+          ))}
+        </div>
+
+        {/* Statistics */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            padding: "1rem",
+          }}
+        >
+          <div
             style={{
-              padding: "0.5rem 1rem",
-              borderRadius: "0.375rem",
-              backgroundColor: year === selectedYear ? "#EF4444" : "transparent",
-              color: year === selectedYear ? "white" : "#6B7280",
-              fontWeight: "bold",
-              transition: "background 0.3s",
+              border: "1px solid #E5E7EB",
+              padding: "1rem",
+              borderRadius: "0.5rem",
+              textAlign: "center",
             }}
           >
-            {year}
-          </button>
-        ))}
-      </div>
-
-      {/* Statistics */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          padding: "1rem",
-        }}
-      >
-        <div
-          style={{
-            border: "1px solid #E5E7EB",
-            padding: "1rem",
-            borderRadius: "0.5rem",
-            textAlign: "center",
-          }}
-        >
-          <p style={{ color: "#EF4444", fontSize: "0.875rem" }}>나의 직관</p>
-          <p style={{ fontSize: "1.125rem", fontWeight: "bold" }}>6승 1패 0무/7경기</p>
-          <p style={{ color: "#EF4444", fontSize: "1.5rem", fontWeight: "bold" }}>86%</p>
+            <p style={{ color: "#EF4444", fontSize: "0.875rem" }}>나의 직관</p>
+            <p style={{ fontSize: "1.125rem", fontWeight: "bold" }}>6승 1패 0무/7경기</p>
+            <p style={{ color: "#EF4444", fontSize: "1.5rem", fontWeight: "bold" }}>86%</p>
+          </div>
+          <div
+            style={{
+              border: "1px solid #E5E7EB",
+              padding: "1rem",
+              borderRadius: "0.5rem",
+              textAlign: "center",
+            }}
+          >
+            <p style={{ color: "#6B7280", fontSize: "0.875rem" }}>우리팀</p>
+            <p style={{ fontSize: "1.125rem", fontWeight: "bold" }}>87승 55패 2무 / 144경기</p>
+            <p style={{ color: "#6B7280", fontSize: "1.5rem", fontWeight: "bold" }}>61%</p>
+          </div>
         </div>
-        <div
-          style={{
-            border: "1px solid #E5E7EB",
-            padding: "1rem",
-            borderRadius: "0.5rem",
-            textAlign: "center",
-          }}
-        >
-          <p style={{ color: "#6B7280", fontSize: "0.875rem" }}>우리팀</p>
-          <p style={{ fontSize: "1.125rem", fontWeight: "bold" }}>87승 55패 2무 / 144경기</p>
-          <p style={{ color: "#6B7280", fontSize: "1.5rem", fontWeight: "bold" }}>61%</p>
-        </div>
-      </div>
 
-      {/* 직관/집관 탭 */}
-      <TabContainer>
-        <Tab $active={activeAttendance === "직관"} onClick={() => setActiveAttendance("직관")}>
-          직관
-        </Tab>
-        <Tab $active={activeAttendance === "집관"} onClick={() => setActiveAttendance("집관")}>
-          집관
-        </Tab>
-      </TabContainer>
+        {/* 직관/집관 탭 */}
+        <TabContainer>
+          <Tab
+            $active={activeAttendance === "직관"}
+            onClick={() => setActiveAttendance("직관")}
+          >
+            직관
+          </Tab>
+          <Tab
+            $active={activeAttendance === "집관"}
+            onClick={() => setActiveAttendance("집관")}
+          >
+            집관
+          </Tab>
+        </TabContainer>
+      </FixedTopContainer>
 
-      {/* Game List (필터링된 데이터) */}
-      <div style={{ padding: "1rem", marginTop: "80px" }}>
+      {/* Game List: 고정 영역 높이(예: 300px)만큼 margin-top 적용 */}
+      <div style={{ padding: "1rem", marginTop: "380px", height: "calc(100vh - 300px)", overflowY: "auto" }}>
         {filteredRecords.map((game) => {
           const [score1, score2] = game.score.split(" - ").map(Number);
           const isTeam1Winner = score1 > score2;
