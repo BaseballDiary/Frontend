@@ -41,6 +41,30 @@ const WriteButton = styled.button`
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
+// Styled Tabs for 직관/집관
+const TabContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  top: 50px; /* 필요시 위치 조정 */
+  left: 0;
+  background: white;
+  z-index: 99;
+  padding: 10px 0;
+`;
+
+const Tab = styled.div<{ $active?: boolean }>`
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  color: ${({ $active }) => ($active ? "#f8223b" : "#999")};
+  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
+  border-bottom: ${({ $active }) => ($active ? "3px solid #f8223b" : "none")};
+`;
+
+// 팀 로고 객체
 const teamLogos: { [key: string]: string } = {
   Lotte: lotte,
   Doosan: doosan,
@@ -55,6 +79,7 @@ const teamLogos: { [key: string]: string } = {
   KBO: kbo,
 };
 
+// 인터페이스에 attendance 필드 추가
 interface GameRecord {
   id: number;
   result: "승리" | "패배";
@@ -62,31 +87,46 @@ interface GameRecord {
   team1: string;
   team2: string;
   feeling: number;
+  attendance: "직관" | "집관";
 }
+
+// dummy data에 attendance 필드 추가 (더 필요하면 추가 가능)
+const dummyGames: GameRecord[] = [
+  { id: 1, result: "승리", score: "11 - 5", team1: "Hanwha", team2: "Lotte", feeling: 3, attendance: "직관" },
+  { id: 2, result: "패배", score: "5 - 11", team1: "Samsung", team2: "Doosan", feeling: 1, attendance: "집관" },
+  { id: 3, result: "승리", score: "11 - 5", team1: "Kia", team2: "KT", feeling: 5, attendance: "직관" },
+  { id: 4, result: "승리", score: "11 - 5", team1: "NC", team2: "LG", feeling: 2, attendance: "집관" },
+  { id: 5, result: "패배", score: "7 - 3", team1: "Hanwha", team2: "Lotte", feeling: 4, attendance: "직관" },
+];
+
+// 내 팀(dummyMyTeam)과 한글 팀 이름 매핑 (kbo 제외)
+const dummyMyTeam = "hanhwa";
+const teamNames: { [key: string]: string } = {
+  lotte: "롯데",
+  doosan: "두산",
+  samsung: "삼성",
+  kiwoom: "키움",
+  hanhwa: "한화",
+  kia: "기아",
+  kt: "KT",
+  nc: "NC",
+  lg: "LG",
+  ssg: "SSG",
+};
 
 const Diary = () => {
   const navigate = useNavigate();
   const [gameRecords, setGameRecords] = useState<GameRecord[]>([]);
   const [selectedYear, setSelectedYear] = useState(2024);
+  // 탭 상태: "직관" 또는 "집관"
+  const [activeAttendance, setActiveAttendance] = useState<"직관" | "집관">("직관");
 
-  // 데이터 로드 (향후 API 연동을 고려)
   useEffect(() => {
-    const fetchGameRecords = async () => {
-      try {
-        const data: GameRecord[] = [
-          { id: 1, result: "승리", score: "11 - 5", team1: "Hanwha", team2: "Lotte", feeling: 3 },
-          { id: 2, result: "패배", score: "5 - 11", team1: "Samsung", team2: "Doosan", feeling: 1 },
-          { id: 3, result: "승리", score: "11 - 5", team1: "Kia", team2: "KT", feeling: 5 },
-          { id: 4, result: "승리", score: "11 - 5", team1: "NC", team2: "LG", feeling: 2 },
-        ];
-        setGameRecords(data);
-      } catch (error) {
-        console.error("데이터 불러오기 실패", error);
-      }
-    };
-
-    fetchGameRecords();
+    // dummy data 사용
+    setGameRecords(dummyGames);
   }, [selectedYear]);
+
+  const filteredRecords = gameRecords.filter(record => record.attendance === activeAttendance);
 
   return (
     <div
@@ -173,33 +213,19 @@ const Diary = () => {
         </div>
       </div>
 
-      {/* Tabs (직관/집관) */}
-      <div
-        style={{
-          display: "flex",
-          borderBottom: "1px solid #E5E7EB",
-        }}
-      >
-        {["직관", "집관"].map((tab, index) => (
-          <button
-            key={tab}
-            style={{
-              flex: 1,
-              padding: "0.5rem 0",
-              fontWeight: "bold",
-              textAlign: "center",
-              borderBottom: index === 0 ? "2px solid #EF4444" : "none",
-              color: index === 0 ? "#EF4444" : "#6B7280",
-            }}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      {/* 직관/집관 탭 */}
+      <TabContainer>
+        <Tab $active={activeAttendance === "직관"} onClick={() => setActiveAttendance("직관")}>
+          직관
+        </Tab>
+        <Tab $active={activeAttendance === "집관"} onClick={() => setActiveAttendance("집관")}>
+          집관
+        </Tab>
+      </TabContainer>
 
-      {/* Game List */}
-      <div style={{ padding: "1rem" }}>
-        {gameRecords.map((game) => {
+      {/* Game List (필터링된 데이터) */}
+      <div style={{ padding: "1rem", marginTop: "80px" }}>
+        {filteredRecords.map((game) => {
           const [score1, score2] = game.score.split(" - ").map(Number);
           const isTeam1Winner = score1 > score2;
           const feelingIcons: { [key: number]: string } = {
