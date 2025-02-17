@@ -8,8 +8,9 @@ const SignUpPage: React.FC = () => {
   const [isEmailValid, setIsEmailValid] = useState(false); // 이메일 유효성 상태확인
   const [verificationCode, setVerificationCode] = useState(""); // 인증번호 입력 상태 추가
   const [isVerified, setIsVerified] = useState(false); // 이메일 인증 여부
-  const [isRequestDisabled, setIsRequestDisabled] = useState(false); // ✅ 버튼 비활성화 상태
-  const [timer, setTimer] = useState(0); // ✅ 남은 시간 (초)
+  const [isRequestDisabled, setIsRequestDisabled] = useState(false); // 인증 번호 요청 버튼 비활성화 상태
+  const [timer, setTimer] = useState(0); // 남은 시간 (초)
+  const [isConfirmed, setIsConfirmed] = useState(false); // 본인 확인 여부 상태 추가
   
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -35,8 +36,8 @@ const SignUpPage: React.FC = () => {
       const response = await requestVerificationCode(email);
       
       if (response) {
-        setIsVerified(true); // ✅ 인증번호가 정상적으로 발송되면 인증 상태 변경
         alert("✅ 인증번호가 발송되었습니다. 이메일을 확인하세요!");
+        setIsVerified(true); // ✅ 인증번호가 정상적으로 발송되면 인증 상태 변경
   
         // ✅ 버튼을 1분(60초) 동안 비활성화
         setIsRequestDisabled(true);
@@ -63,6 +64,22 @@ const SignUpPage: React.FC = () => {
   //인증번호 입력 핸들러
   const handleVerificationCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVerificationCode(e.target.value);
+  };
+
+  // 인증번호 버튼 비활성화 핸들러
+  const handleConfirmVerification = async () => {
+    try {
+      const response = await confirmVerificationCode(email, verificationCode);
+      
+      if (response) {
+        setIsConfirmed(true); // ✅ 본인 확인 완료 → 버튼 비활성화
+        alert("✅ 본인 확인이 완료되었습니다!");
+        
+      }
+    } catch (error) {
+      alert("❌ 인증번호가 일치하지 않습니다. 다시 시도하세요.");
+      console.error("❌ 인증 실패:", error);
+    }
   };
 
   // PW 입력 핸들러
@@ -100,10 +117,13 @@ const SignUpPage: React.FC = () => {
           )}
 
           <button
-            className="verify-button"
+            className={`
+            sendVerificationCode-button 
+            ${isConfirmed ? "confirmed" : ""}
+            ${isRequestDisabled || !isEmailValid ? "disabled" : ""}`}
             onClick={handleRequestVerification} 
-            disabled={!isEmailValid || isRequestDisabled}>
-            {isRequestDisabled ? `다시 요청 가능 (${timer}초)` : "인증번호받기"}
+            disabled={isConfirmed || !isEmailValid || isRequestDisabled }>
+            {isConfirmed ? "인증완료" : isRequestDisabled ? `다시 요청 가능 (${timer}초)` : "인증번호받기"}
           </button>
 
           <InputField 
@@ -114,9 +134,10 @@ const SignUpPage: React.FC = () => {
           />
 
           <button 
-          className="verify-button"
-          onClick={() => confirmVerificationCode(email, verificationCode)}>
-            본인확인
+          className= {`verify-button ${isConfirmed ? "confirmed" : ""}`} // 조건부 클래스 적용해서 스타일링 변화화
+          onClick={handleConfirmVerification}
+          disabled={isConfirmed}>
+          {isConfirmed ? "본인확인완료" : "본인확인"}
           </button>
 
         </div>
@@ -139,7 +160,7 @@ const SignUpPage: React.FC = () => {
         <button 
         className="signup-button"
         onClick={() => signup(email, password, passwordConfirm)}
-        // disabled={!isEmailChecked || !isPasswordValid || !isPasswordMatched}
+        disabled={!(isConfirmed && isPasswordValid && isPasswordMatched)}
         >
           회원가입
         </button>
