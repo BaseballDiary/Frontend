@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import lotte from "../assets/team/lotte.png";
 import doosan from "../assets/team/doosan.png";
 import samsung from "../assets/team/samsung.png";
@@ -19,6 +20,7 @@ import feeling5 from "../assets/feeling/feeling5.svg";
 import check from "../assets/check.svg";
 import circle from "../assets/circle.svg";
 import NextButton from "../components/Next-button";
+import { getMyClub } from "../api/MydiaryApi"; // API 함수 임포트
 
 // 팀 로고 객체
 const teamAssets: { [key: string]: string } = {
@@ -50,15 +52,21 @@ const teamNames: { [key: string]: string } = {
   kbo: "KBO"
 };
 
-// 내 팀(dummyMyTeam) – 검색 view 왼쪽에 표시 (대소문자 주의)
-const dummyMyTeam = "Hanwha";
-const feelingAssets = [feeling1, feeling2, feeling3, feeling4, feeling5];
-
+// 헬퍼 함수: 백엔드에서 받은 한글 구단명(예:"두산 베어스")와 일치하는 팀 자산의 key(예:"Doosan") 반환
+const getTeamAssetKey = (clubName: string): string | null => {
+  for (const [key, value] of Object.entries(teamNames)) {
+    if (value === clubName) {
+      // teamAssets의 key는 첫 글자가 대문자입니다.
+      return key.charAt(0).toUpperCase() + key.slice(1);
+    }
+  }
+  return null;
+};
 
 // 새 API 응답 형식 인터페이스
 interface GameRecord {
   gameId: number;
-  team1: string;       // 내 팀 (항상 dummyMyTeam)
+  team1: string;       // 내 팀 (API로 받아온 내 구단)
   team2: string;       // 팀모달에서 선택한 팀과 일치해야 함
   team1Score: number;
   team2Score: number;
@@ -71,10 +79,10 @@ interface GameRecord {
 }
 
 // dummy API 응답 (예시)
-// 내 팀은 dummyMyTeam, 반환된 경기의 team2는 "Lotte"
+// 내 팀은 API로 받아온 내 구단, 반환된 경기의 team2는 "Lotte"
 const dummyApiResponse: GameRecord = {
   gameId: 1,
-  team1: dummyMyTeam,
+  team1: "", // 나중에 myClub로 대체할 예정
   team2: "Lotte",
   team1Score: 5,
   team2Score: 11,
@@ -88,9 +96,15 @@ const dummyApiResponse: GameRecord = {
 
 function DiaryNew() {
   const navigate = useNavigate();
+
+  // 내 구단 정보를 API로 받아오기 위한 상태
+  const [myClub, setMyClub] = useState<string | null>(null);
+  // 내 구단(영문 키; teamAssets에 사용)
+  const myTeamAssetKey = myClub ? getTeamAssetKey(myClub) : "";
+
+  // 기존 상태들
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  // 이제 gameResults의 타입은 GameRecord[]
   const [gameResults, setGameResults] = useState<GameRecord[]>([]);
   const [selectedGame, setSelectedGame] = useState<GameRecord | null>(null);
   const [view, setView] = useState("search"); // "search", "select", "write"
@@ -99,6 +113,7 @@ function DiaryNew() {
   const [attendance, setAttendance] = useState<string | null>(null);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
 
+  // 스타일 객체 (생략)
   const teamBoxStyle = {
     flex: 1,
     border: "1px solid gray",
@@ -129,6 +144,23 @@ function DiaryNew() {
     maxWidth: "600px",
   };
 
+  // 컴포넌트가 마운트될 때 내 구단 정보를 가져옴
+  useEffect(() => {
+    getMyClub()
+      .then((club) => {
+        setMyClub(club);
+      })
+      .catch((error) => {
+        console.error("내 구단 정보를 가져오는 데 실패했습니다.", error);
+      });
+  }, []);
+
+  // dummyApiResponse를 내 구단 정보를 반영하도록 수정
+  const simulatedApiResponse: GameRecord = {
+    ...dummyApiResponse,
+    team1: myClub || "", // 내 구단 정보가 없으면 빈 문자열 사용
+  };
+
   // Search view: 날짜와 팀모달 선택을 기준으로 API 호출 시뮬레이션
   const handleSearch = () => {
     if (!selectedDate) {
@@ -139,10 +171,9 @@ function DiaryNew() {
       alert("경기대상을 선택하세요");
       return;
     }
-    // 내 팀은 항상 dummyMyTeam.
-    // 만약 팀모달에서 선택한 팀이 dummyApiResponse.team2와 일치하거나 선택한 팀이 "KBO"이면 결과 반환
-    if (selectedTeam === dummyApiResponse.team2 || selectedTeam === "KBO") {
-      setGameResults([dummyApiResponse]);
+    // 예시: 팀모달에서 선택한 팀이 dummyApiResponse.team2와 일치하거나 "KBO"이면 결과 반환
+    if (selectedTeam === simulatedApiResponse.team2 || selectedTeam === "KBO") {
+      setGameResults([simulatedApiResponse]);
     } else {
       setGameResults([]);
     }
@@ -194,7 +225,7 @@ function DiaryNew() {
             <span style={{ fontWeight: "normal" }}>경기대상</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem" }}>
-            {/* 내 팀은 항상 표시 */}
+            {/* 내 팀은 API로 받아온 내 구단 사용 */}
             <div
               style={{
                 ...teamBoxStyle,
@@ -205,14 +236,18 @@ function DiaryNew() {
                 alignItems: "center",
               }}
             >
-              <img
-                src={teamAssets[dummyMyTeam as keyof typeof teamAssets]}
-                alt={dummyMyTeam}
-                style={{ width: "100%", height: "100%", objectFit: "contain" }}
-              />
+              {myTeamAssetKey ? (
+                <img
+                  src={teamAssets[myTeamAssetKey as keyof typeof teamAssets]}
+                  alt={myClub || ""}
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                />
+              ) : (
+                "로딩중..."
+              )}
             </div>
             <div style={{ fontSize: "1.25rem", fontWeight: "bold", alignSelf: "center" }}>VS</div>
-            {/* 팀 모달: 내 팀과 같으면 선택할 수 없음 */}
+            {/* 팀 모달: 내 팀(내 구단)은 선택할 수 없도록 필터링 */}
             <div
               style={{
                 ...teamBoxStyle,
@@ -225,71 +260,72 @@ function DiaryNew() {
               onClick={() => setIsTeamModalOpen(true)}
             >
               {selectedTeam ? (
-    <img
-      src={teamAssets[selectedTeam as keyof typeof teamAssets]}
-      alt={selectedTeam}
-      style={{ width: "100%", height: "100%", objectFit: "contain" }}
-    />
-  ) : (
-    <div style={{ textAlign: "center", lineHeight: "1.2" }}>
-      <div>선택해주세요</div>
-      <div style={{ fontSize: "0.75rem", fontWeight: "normal" }}>
-        *모든 경기를 확인하고싶으면 KBO를 선택해주세요
-      </div>
-    </div>
-  )}
+                <img
+                  src={teamAssets[selectedTeam as keyof typeof teamAssets]}
+                  alt={selectedTeam}
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                />
+              ) : (
+                <div style={{ textAlign: "center", lineHeight: "1.2" }}>
+                  <div>선택해주세요</div>
+                  <div style={{ fontSize: "0.75rem", fontWeight: "normal" }}>
+                    *모든 경기를 확인하고싶으면 KBO를 선택해주세요
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div style={{ marginTop: "2rem" }}>
             <NextButton text="검색하기" bgColor="red" width="100%" onClick={handleSearch} />
           </div>
           {isTeamModalOpen && (
-  <div style={modalOverlayStyle}>
-    <div style={modalStyle}>
-      <h3 style={{ textAlign: "center", fontWeight: "bold" }}>팀 선택</h3>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "10px",
-          padding: "1rem",
-        }}
-      >
-        {Object.keys(teamAssets)
-          .filter((team) => team !== dummyMyTeam)
-          .map((team) => (
-            <div
-              key={team}
-              onClick={() => {
-                setSelectedTeam(team);
-                setIsTeamModalOpen(false);
-              }}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                cursor: "pointer",
-              }}
-            >
-              <img
-                src={teamAssets[team as keyof typeof teamAssets]}
-                alt={teamNames[team.toLowerCase()]}
-                style={{ width: "50px" }}
-              />
-              <span style={{ fontSize: "0.875rem", marginTop: "4px" }}>
-                {teamNames[team.toLowerCase()]}
-              </span>
+            <div style={modalOverlayStyle}>
+              <div style={modalStyle}>
+                <h3 style={{ textAlign: "center", fontWeight: "bold" }}>팀 선택</h3>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "10px",
+                    padding: "1rem",
+                  }}
+                >
+                  {Object.keys(teamAssets)
+                    // 내 구단(영문 키)과 일치하는 팀은 모달에서 제외
+                    .filter((team) => team !== myTeamAssetKey)
+                    .map((team) => (
+                      <div
+                        key={team}
+                        onClick={() => {
+                          setSelectedTeam(team);
+                          setIsTeamModalOpen(false);
+                        }}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <img
+                          src={teamAssets[team as keyof typeof teamAssets]}
+                          alt={teamNames[team.toLowerCase()]}
+                          style={{ width: "50px" }}
+                        />
+                        <span style={{ fontSize: "0.875rem", marginTop: "4px" }}>
+                          {teamNames[team.toLowerCase()]}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+                <NextButton text="닫기" bgColor="gray" width="100%" onClick={() => setIsTeamModalOpen(false)} />
+              </div>
             </div>
-          ))}
-      </div>
-      <NextButton text="닫기" bgColor="gray" width="100%" onClick={() => setIsTeamModalOpen(false)} />
-    </div>
-  </div>
-)}
+          )}
         </div>
       )}
       {view === "select" && (
-        <div style={{ padding: "1rem"}}>
+        <div style={{ padding: "1rem" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h2 style={{ fontSize: "1.125rem", fontWeight: "bold" }}>검색 결과</h2>
             <span style={{ color: "red", fontWeight: "bold", fontSize: "1rem" }}>
@@ -332,12 +368,12 @@ function DiaryNew() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
                     <img
-                      src={teamAssets["Hanwha"]}
-                      alt="Hanwha"
+                      src={teamAssets[getTeamAssetKey(myClub || "") as keyof typeof teamAssets]}
+                      alt={myClub || ""}
                       style={{ width: "60px", height: "60px" }}
                     />
                     <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>
-                      {teamNames["hanhwa"]}
+                      {myClub}
                     </p>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, textAlign: "center" }}>
@@ -418,12 +454,12 @@ function DiaryNew() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
                   <img
-                    src={teamAssets["Hanwha"]}
-                    alt="Hanwha"
+                    src={teamAssets[getTeamAssetKey(myClub || "") as keyof typeof teamAssets]}
+                    alt={myClub || ""}
                     style={{ width: "72px", height: "72px" }}
                   />
                   <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>
-                    {teamNames["hanhwa"]}
+                    {myClub}
                   </p>
                 </div>
                 <div
@@ -500,7 +536,13 @@ function DiaryNew() {
             }}
           >
             <div style={{ display: "flex", gap: "0.5rem" }}>
-              {feelingAssets.map((feelingImg, index) => (
+              {[
+                feeling1,
+                feeling2,
+                feeling3,
+                feeling4,
+                feeling5,
+              ].map((feelingImg, index) => (
                 <img
                   key={index}
                   src={feelingImg}
