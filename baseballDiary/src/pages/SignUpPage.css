@@ -29,6 +29,18 @@
   margin-top: 4px; 
 }
 
+.sendVerificationCode-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #EA2F3E;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* 본인확인 버튼 스타일 */
 .verify-button {
   width: 100%;
   padding: 10px;
@@ -40,9 +52,13 @@
   margin-bottom: 10px;
 }
 
+/* 본인확인 완료 스타일 */
+.confirmed { 
+  background-color: #2CCF53;
+}
+
 .signup-button:disabled {
   background-color: #AAABAC;
-  cursor: not-allowed;
 }
 
 /*제목 스타일링*/
