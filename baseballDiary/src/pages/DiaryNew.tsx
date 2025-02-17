@@ -21,8 +21,21 @@ import circle from "../assets/circle.svg";
 import NextButton from "../components/Next-button";
 
 // 팀 로고 객체
-const teamAssets = { lotte, doosan, samsung, kiwoom, hanhwa, kia, kt, nc, lg, ssg, kbo };
-// 한글 팀 이름 매핑 (kbo 제외)
+const teamAssets: { [key: string]: string } = {
+  Lotte: lotte,
+  Doosan: doosan,
+  Samsung: samsung,
+  Kiwoom: kiwoom,
+  Hanwha: hanhwa,
+  Kia: kia,
+  KT: kt,
+  NC: nc,
+  LG: lg,
+  SSG: ssg,
+  KBO: kbo,
+};
+
+// 한글 팀 이름 매핑 (KBO 제외)
 const teamNames: { [key: string]: string } = {
   lotte: "롯데 자이언츠",
   doosan: "두산 베어스",
@@ -35,29 +48,51 @@ const teamNames: { [key: string]: string } = {
   lg: "LG 트윈스",
   ssg: "SSG 랜더스",
 };
-// 내 팀(dummyMyTeam)과 매핑 (검색 view의 왼쪽에 내 팀을 표시할 때 사용)
-const teamMapping: { [key: string]: string } = {
-  "한화": "hanhwa",
-  "롯데": "lotte",
-};
 
+// 내 팀(dummyMyTeam) – 검색 view 왼쪽에 표시 (대소문자 주의)
+const dummyMyTeam = "Hanwha";
 const feelingAssets = [feeling1, feeling2, feeling3, feeling4, feeling5];
-const dummyMyTeam = "hanhwa";
 
-const dummyGames = [
-  { id: 1, date: "25.01.45", team1: "한화", team2: "롯데", score: "5 - 11", location: "잠실" },
-  { id: 2, date: "25.01.45", team1: "한화", team2: "롯데", score: "5 - 11", location: "잠실" },
-  { id: 3, date: "25.01.45", team1: "한화", team2: "롯데", score: "5 - 11", location: "잠실" },
-  { id: 4, date: "25.01.45", team1: "한화", team2: "롯데", score: "5 - 11", location: "잠실" }
-];
+
+// 새 API 응답 형식 인터페이스
+interface GameRecord {
+  gameId: number;
+  team1: string;       // 내 팀 (항상 dummyMyTeam)
+  team2: string;       // 팀모달에서 선택한 팀과 일치해야 함
+  team1Score: number;
+  team2Score: number;
+  gameDate: string;    // 예: "2025-02-17"
+  day: string;         // 요일 (예: "월요일")
+  time: string;        // 예: "18:00"
+  location: string;
+  gameStatus: "승리" | "패배";
+  feeling: number;
+}
+
+// dummy API 응답 (예시)
+// 내 팀은 dummyMyTeam, 반환된 경기의 team2는 "Lotte"
+const dummyApiResponse: GameRecord = {
+  gameId: 1,
+  team1: dummyMyTeam,
+  team2: "Lotte",
+  team1Score: 5,
+  team2Score: 11,
+  gameDate: "2025-02-17",
+  day: "월요일",
+  time: "18:00",
+  location: "잠실",
+  gameStatus: "패배",
+  feeling: 3,
+};
 
 function DiaryNew() {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  const [gameResults, setGameResults] = useState<typeof dummyGames>([]);
-  const [selectedGame, setSelectedGame] = useState<typeof dummyGames[number] | null>(null);
-  const [view, setView] = useState("search"); // search, select, write
+  // 이제 gameResults의 타입은 GameRecord[]
+  const [gameResults, setGameResults] = useState<GameRecord[]>([]);
+  const [selectedGame, setSelectedGame] = useState<GameRecord | null>(null);
+  const [view, setView] = useState("search"); // "search", "select", "write"
   const [feeling, setFeeling] = useState<number | null>(null);
   const [review, setReview] = useState("");
   const [attendance, setAttendance] = useState<string | null>(null);
@@ -93,7 +128,7 @@ function DiaryNew() {
     maxWidth: "600px",
   };
 
-  // Search view: 날짜와 상대 팀 선택 검증
+  // Search view: 날짜와 팀모달 선택을 기준으로 API 호출 시뮬레이션
   const handleSearch = () => {
     if (!selectedDate) {
       alert("경기날짜를 선택하세요");
@@ -103,7 +138,13 @@ function DiaryNew() {
       alert("경기대상을 선택하세요");
       return;
     }
-    setGameResults(dummyGames);
+    // 내 팀은 항상 dummyMyTeam.
+    // 만약 팀모달에서 선택한 팀이 dummyApiResponse.team2와 일치하거나 선택한 팀이 "KBO"이면 결과 반환
+    if (selectedTeam === dummyApiResponse.team2 || selectedTeam === "KBO") {
+      setGameResults([dummyApiResponse]);
+    } else {
+      setGameResults([]);
+    }
     setSelectedGame(null);
     setView("select");
   };
@@ -152,7 +193,7 @@ function DiaryNew() {
             <span style={{ fontWeight: "normal" }}>경기대상</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem" }}>
-            {/* 내 팀은 왼쪽에 항상 표시 */}
+            {/* 내 팀은 항상 표시 */}
             <div
               style={{
                 ...teamBoxStyle,
@@ -170,7 +211,7 @@ function DiaryNew() {
               />
             </div>
             <div style={{ fontSize: "1.25rem", fontWeight: "bold", alignSelf: "center" }}>VS</div>
-            {/* 팀 모달에서 선택한 팀 (내 팀과 같으면 선택할 수 없음) */}
+            {/* 팀 모달: 내 팀과 같으면 선택할 수 없음 */}
             <div
               style={{
                 ...teamBoxStyle,
@@ -209,7 +250,7 @@ function DiaryNew() {
                   }}
                 >
                   {Object.keys(teamAssets)
-                    .filter((team) => team !== "kbo" && team !== dummyMyTeam)
+                    .filter((team) => team.toUpperCase() !== "KBO" && team !== dummyMyTeam)
                     .map((team) => (
                       <div
                         key={team}
@@ -242,84 +283,85 @@ function DiaryNew() {
         </div>
       )}
       {view === "select" && (
-        <div style={{ padding: "1rem" }}>
+        <div style={{ padding: "1rem"}}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h2 style={{ fontSize: "1.125rem", fontWeight: "bold" }}>검색 결과</h2>
             <span style={{ color: "red", fontWeight: "bold", fontSize: "1rem" }}>
               {gameResults.length}건
             </span>
           </div>
-          {gameResults.map((game) => {
-            const scores = game.score.split(" - ");
-            const score1 = parseInt(scores[0]);
-            const score2 = parseInt(scores[1]);
-            const isTeam1Winner = score1 > score2;
-            return (
+          {gameResults.length === 0 ? (
+            <p style={{ textAlign: "center", color: "#999" }}>검색된 경기가 없습니다.</p>
+          ) : (
+            gameResults.map((game) => (
               <div
-                key={game.id}
+                key={game.gameId}
                 style={{
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: "column",
                   backgroundColor: "white",
                   padding: "1rem",
                   borderRadius: "0.75rem",
                   boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                  border: selectedGame && selectedGame.id === game.id ? "2px solid red" : "1px solid #E5E7EB",
+                  border: selectedGame && selectedGame.gameId === game.gameId ? "2px solid red" : "1px solid #E5E7EB",
                   marginBottom: "0.5rem",
                   cursor: "pointer",
                 }}
                 onClick={() => setSelectedGame(game)}
               >
-                <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      color: "#6B7280",
-                      fontSize: "0.875rem",
-                      marginBottom: "8px",
-                    }}
-                  >
-                    <p>{game.date}</p>
-                    <p>{game.location}</p>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    color: "#6B7280",
+                    fontSize: "0.875rem",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <p>
+                    {game.gameDate} ({game.day}) {game.time}
+                  </p>
+                  <p>{game.location}</p>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+                    <img
+                      src={teamAssets["Hanwha"]}
+                      alt="Hanwha"
+                      style={{ width: "60px", height: "60px" }}
+                    />
+                    <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>
+                      {teamNames["hanhwa"]}
+                    </p>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
-                      <img
-                        src={teamAssets[teamMapping[game.team1] as keyof typeof teamAssets]}
-                        alt={game.team1}
-                        style={{ width: "60px", height: "60px" }}
-                      />
-                      <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{game.team1}</p>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        flex: 1,
-                        textAlign: "center",
-                      }}
-                    >
-                      <p style={{ fontSize: "1.75rem", fontWeight: "bold" }}>
-                        <span style={{ fontWeight: isTeam1Winner ? "800" : "400" }}>{score1}</span>
-                        {" - "}
-                        <span style={{ fontWeight: !isTeam1Winner ? "800" : "400" }}>{score2}</span>
-                      </p>
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
-                      <img
-                        src={teamAssets[teamMapping[game.team2] as keyof typeof teamAssets]}
-                        alt={game.team2}
-                        style={{ width: "60px", height: "60px" }}
-                      />
-                      <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{game.team2}</p>
-                    </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, textAlign: "center" }}>
+                    <p style={{ fontWeight: "bold", color: game.gameStatus === "승리" ? "#10B981" : "#EF4444" }}>
+                      {game.gameStatus}
+                    </p>
+                    <p style={{ fontSize: "1.25rem", fontWeight: "bold" }}>
+                      <span style={{ fontWeight: game.team1Score > game.team2Score ? "800" : "400" }}>
+                        {game.team1Score}
+                      </span>
+                      {" - "}
+                      <span style={{ fontWeight: game.team1Score > game.team2Score ? "400" : "800" }}>
+                        {game.team2Score}
+                      </span>
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
+                    <img
+                      src={teamAssets["Lotte"]}
+                      alt="Lotte"
+                      style={{ width: "60px", height: "60px" }}
+                    />
+                    <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>
+                      {teamNames["lotte"]}
+                    </p>
                   </div>
                 </div>
               </div>
-            );
-          })}
+            ))
+          )}
           <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
             <NextButton text="이전" bgColor="red" width="100%" onClick={() => setView("search")} />
             <NextButton
@@ -362,17 +404,21 @@ function DiaryNew() {
                   marginBottom: "8px",
                 }}
               >
-                <p>{selectedGame.date}</p>
+                <p>
+                  {selectedGame.gameDate} ({selectedGame.day}) {selectedGame.time}
+                </p>
                 <p>{selectedGame.location}</p>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
                   <img
-                    src={teamAssets[teamMapping[selectedGame.team1] as keyof typeof teamAssets]}
-                    alt={selectedGame.team1}
+                    src={teamAssets["Hanwha"]}
+                    alt="Hanwha"
                     style={{ width: "72px", height: "72px" }}
                   />
-                  <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{selectedGame.team1}</p>
+                  <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>
+                    {teamNames["hanhwa"]}
+                  </p>
                 </div>
                 <div
                   style={{
@@ -383,26 +429,25 @@ function DiaryNew() {
                     textAlign: "center",
                   }}
                 >
-                  {(() => {
-                    const scores = selectedGame.score.split(" - ");
-                    const score1 = parseInt(scores[0]);
-                    const score2 = parseInt(scores[1]);
-                    return (
-                      <p style={{ fontSize: "1.75rem", fontWeight: "bold" }}>
-                        <span style={{ fontWeight: score1 > score2 ? "800" : "400" }}>{score1}</span>
-                        {" - "}
-                        <span style={{ fontWeight: score1 > score2 ? "400" : "800" }}>{score2}</span>
-                      </p>
-                    );
-                  })()}
+                  <p style={{ fontSize: "1.75rem", fontWeight: "bold" }}>
+                    <span style={{ fontWeight: selectedGame.team1Score > selectedGame.team2Score ? "800" : "400" }}>
+                      {selectedGame.team1Score}
+                    </span>
+                    {" - "}
+                    <span style={{ fontWeight: selectedGame.team1Score > selectedGame.team2Score ? "400" : "800" }}>
+                      {selectedGame.team2Score}
+                    </span>
+                  </p>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
                   <img
-                    src={teamAssets[teamMapping[selectedGame.team2] as keyof typeof teamAssets]}
-                    alt={selectedGame.team2}
+                    src={teamAssets["Lotte"]}
+                    alt="Lotte"
                     style={{ width: "72px", height: "72px" }}
                   />
-                  <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>{selectedGame.team2}</p>
+                  <p style={{ fontSize: "0.875rem", fontWeight: "bold", marginTop: "4px" }}>
+                    {teamNames["lotte"]}
+                  </p>
                 </div>
               </div>
             </div>
@@ -502,7 +547,7 @@ function DiaryNew() {
                   review,
                 });
                 alert("전송되었습니다");
-                navigate("/diary"); // 작성 후 /diary로 이동
+                navigate("/diary");
               }}
             />
           </div>
