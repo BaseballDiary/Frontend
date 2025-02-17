@@ -47,6 +47,7 @@ const teamNames: { [key: string]: string } = {
   nc: "NC 다이노스",
   lg: "LG 트윈스",
   ssg: "SSG 랜더스",
+  kbo: "KBO"
 };
 
 // 내 팀(dummyMyTeam) – 검색 view 왼쪽에 표시 (대소문자 주의)
@@ -224,62 +225,67 @@ function DiaryNew() {
               onClick={() => setIsTeamModalOpen(true)}
             >
               {selectedTeam ? (
-                <img
-                  src={teamAssets[selectedTeam as keyof typeof teamAssets]}
-                  alt={selectedTeam}
-                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                />
-              ) : (
-                "선택해주세요"
-              )}
+    <img
+      src={teamAssets[selectedTeam as keyof typeof teamAssets]}
+      alt={selectedTeam}
+      style={{ width: "100%", height: "100%", objectFit: "contain" }}
+    />
+  ) : (
+    <div style={{ textAlign: "center", lineHeight: "1.2" }}>
+      <div>선택해주세요</div>
+      <div style={{ fontSize: "0.75rem", fontWeight: "normal" }}>
+        *모든 경기를 확인하고싶으면 KBO를 선택해주세요
+      </div>
+    </div>
+  )}
             </div>
           </div>
           <div style={{ marginTop: "2rem" }}>
             <NextButton text="검색하기" bgColor="red" width="100%" onClick={handleSearch} />
           </div>
           {isTeamModalOpen && (
-            <div style={modalOverlayStyle}>
-              <div style={modalStyle}>
-                <h3 style={{ textAlign: "center", fontWeight: "bold" }}>팀 선택</h3>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(3, 1fr)",
-                    gap: "10px",
-                    padding: "1rem",
-                  }}
-                >
-                  {Object.keys(teamAssets)
-                    .filter((team) => team.toUpperCase() !== "KBO" && team !== dummyMyTeam)
-                    .map((team) => (
-                      <div
-                        key={team}
-                        onClick={() => {
-                          setSelectedTeam(team);
-                          setIsTeamModalOpen(false);
-                        }}
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <img
-                          src={teamAssets[team as keyof typeof teamAssets]}
-                          alt={team}
-                          style={{ width: "50px" }}
-                        />
-                        <span style={{ fontSize: "0.875rem", marginTop: "4px" }}>
-                          {teamNames[team]}
-                        </span>
-                      </div>
-                    ))}
-                </div>
-                <NextButton text="닫기" bgColor="gray" width="100%" onClick={() => setIsTeamModalOpen(false)} />
-              </div>
+  <div style={modalOverlayStyle}>
+    <div style={modalStyle}>
+      <h3 style={{ textAlign: "center", fontWeight: "bold" }}>팀 선택</h3>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: "10px",
+          padding: "1rem",
+        }}
+      >
+        {Object.keys(teamAssets)
+          .filter((team) => team !== dummyMyTeam)
+          .map((team) => (
+            <div
+              key={team}
+              onClick={() => {
+                setSelectedTeam(team);
+                setIsTeamModalOpen(false);
+              }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <img
+                src={teamAssets[team as keyof typeof teamAssets]}
+                alt={teamNames[team.toLowerCase()]}
+                style={{ width: "50px" }}
+              />
+              <span style={{ fontSize: "0.875rem", marginTop: "4px" }}>
+                {teamNames[team.toLowerCase()]}
+              </span>
             </div>
-          )}
+          ))}
+      </div>
+      <NextButton text="닫기" bgColor="gray" width="100%" onClick={() => setIsTeamModalOpen(false)} />
+    </div>
+  </div>
+)}
         </div>
       )}
       {view === "select" && (
