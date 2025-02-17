@@ -51,3 +51,40 @@ export const fetchGame = async (date: string): Promise<GameRecord[]> => {
     throw error;
   }
 };
+
+/**
+ * 사용자가 작성한 일기를 생성하는 함수
+ * @param gameId - 선택한 경기의 ID
+ * @param viewType - "직관" 또는 "집관"
+ * @param score - 사용자가 선택한 점수 (문자열 "1" ~ "5")
+ * @param contents - 사용자의 감상평
+ * @returns 생성된 일기 데이터 (백엔드 응답)
+ */
+export const createDiary = async (
+  gameId: number,
+  viewType: string,
+  score: string,
+  contents: string
+): Promise<any> => {
+  try {
+    const response = await axios.post(
+      "https://api.baseballdiary.shop/diary/create",
+      {
+        gameId,
+        viewType,
+        score,
+        contents,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("일기를 생성하는데 실패했습니다.", error);
+    throw error;
+  }
+};

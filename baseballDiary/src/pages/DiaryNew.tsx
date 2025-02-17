@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyClub, fetchGame } from "../api/MydiaryApi"; // API 함수 임포트
+import { getMyClub, fetchGame, createDiary } from "../api/MydiaryApi"; // API 함수 임포트
 import lotte from "../assets/team/lotte.png";
 import doosan from "../assets/team/doosan.png";
 import samsung from "../assets/team/samsung.png";
@@ -66,7 +66,7 @@ const teamNames: { [key: string]: string } = {
   kbo: "KBO"
 };
 
-// 헬퍼 함수: 백엔드에서 받은 한글 구단명(예: "두산 베어스")와 일치하는 팀 자산의 key(예: "Doosan") 반환
+// 헬퍼 함수: 백엔드에서 받은 한글 구단명(예: "두산")과 일치하는 팀 자산의 key(예: "Doosan") 반환
 const getTeamAssetKey = (clubName: string): string | null => {
   for (const [key, value] of Object.entries(teamNames)) {
     if (value === clubName) {
@@ -76,8 +76,6 @@ const getTeamAssetKey = (clubName: string): string | null => {
   }
   return null;
 };
-
-// GameRecord 인터페이스는 MydiaryApi 파일에 있다고 가정합니다.
 
 function DiaryNew() {
   const navigate = useNavigate();
@@ -154,11 +152,8 @@ function DiaryNew() {
       return;
     }
     try {
-      // fetchGame API 호출: date만 query parameter로 전송합니다.
       const games = await fetchGame(selectedDate);
-      // 만약 반환된 값이 배열이 아니라면 배열로 감싸줍니다.
       const gamesArray = Array.isArray(games) ? games : [games];
-      // 선택된 팀이 "KBO"이면 전체 게임, 아니면 상대팀(team2)이 선택된 팀과 일치하는 게임만 필터링
       const filteredGames =
         selectedTeam === "KBO"
           ? gamesArray
@@ -168,6 +163,29 @@ function DiaryNew() {
       setView("select");
     } catch (error) {
       alert("경기 정보를 가져오는데 실패했습니다.");
+    }
+  };
+
+  // 일기 작성 API 호출 (write view)
+  const handleWrite = async () => {
+    if (!attendance) {
+      alert("직관/집관을 선택하세요");
+      return;
+    }
+    if (selectedGame === null) {
+      alert("경기를 선택해주세요");
+      return;
+    }
+    // feeling을 string으로 변환 (예: 0 -> "1", 1 -> "2", …)
+    const score = feeling !== null ? String(feeling + 1) : "";
+    // viewType enum 변환: "집관" -> "atHome", "직관" -> "onSite"
+    const viewType = attendance === "집관" ? "atHome" : "onSite";
+    try {
+      await createDiary(selectedGame.gameId, viewType, score, review);
+      alert("전송되었습니다");
+      navigate("/diary");
+    } catch (error) {
+      alert("일기를 생성하는데 실패했습니다.");
     }
   };
 
@@ -460,20 +478,7 @@ function DiaryNew() {
           </div>
           <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
             <NextButton text="이전" bgColor="red" width="100%" onClick={() => setView("select")} />
-            <NextButton
-              text="작성하기"
-              bgColor="red"
-              width="100%"
-              onClick={() => {
-                if (!attendance) {
-                  alert("직관/집관을 선택하세요");
-                  return;
-                }
-                console.log("전송된 데이터:", { selectedDate, selectedTeam, selectedGame, attendance, feeling, review });
-                alert("전송되었습니다");
-                navigate("/diary");
-              }}
-            />
+            <NextButton text="작성하기" bgColor="red" width="100%" onClick={handleWrite} />
           </div>
         </div>
       )}
