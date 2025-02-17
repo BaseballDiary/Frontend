@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// 이메일 인증 번호 요청 API 호출 함수수
+// 이메일 인증 번호 요청 API 호출 함수
 export const requestVerificationCode = async (email: string): Promise<void> => {
   try {
     const response = await axios.post("https://api.baseballdiary.shop/auth", {
