@@ -119,3 +119,34 @@ export const getTeamStat = async (year: number): Promise<TeamStat> => {
     throw error;
   }
 };
+
+export interface MyStat {
+  myWins: number;
+  myLosses: number;
+  myDraws: number;
+  myGames: number;
+  myWinRate: number;
+}
+/**
+ * 선택한 연도의 내 팀 통계(우리팀) 정보를 가져오는 함수
+ * @param year - 선택한 연도 (예: 2024)
+ * @returns MyStat 데이터
+ */
+
+export const getMyStat = async (year: number): Promise<MyStat> => {
+  try {
+    const response = await axios.get(
+      `https://api.baseballdiary.shop/diary/mystat/${year}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("내 팀 통계를 가져오는데 실패했습니다.", error);
+    throw error;
+  }
+};
