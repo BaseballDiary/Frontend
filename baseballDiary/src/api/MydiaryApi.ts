@@ -88,3 +88,34 @@ export const createDiary = async (
     throw error;
   }
 };
+
+/**
+ * 선택한 연도를 기반으로 팀 통계 정보를 가져오는 함수
+ * @param year - 선택한 연도 (예: 2024)
+ * @returns 팀 통계 데이터 (예: { teamWins, teamLosses, teamDraws, teamGames, teamWinRate })
+ */
+export interface TeamStat {
+  teamWins: number;
+  teamLosses: number;
+  teamDraws: number;
+  teamGames: number;
+  teamWinRate: number;
+}
+
+export const getTeamStat = async (year: number): Promise<TeamStat> => {
+  try {
+    const response = await axios.get(
+      `https://api.baseballdiary.shop/diary/teamstat/${year}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("팀 통계를 가져오는데 실패했습니다.", error);
+    throw error;
+  }
+};

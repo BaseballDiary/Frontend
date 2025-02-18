@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaEdit } from "react-icons/fa";
 import styled from "styled-components";
+import { getTeamStat } from "../api/MydiaryApi"; // 팀 통계 API 함수
 
 // 팀 로고 import
 import lotte from "../assets/team/lotte.png";
@@ -86,6 +87,15 @@ const teamLogos: { [key: string]: string } = {
   KBO: kbo,
 };
 
+// dummy data에 attendance 필드 추가 (더 필요하면 추가 가능)
+const dummyGames: GameRecord[] = [
+  { id: 1, result: "승리", score: "11 - 5", team1: "Hanwha", team2: "Lotte", feeling: 3, attendance: "직관" },
+  { id: 2, result: "패배", score: "5 - 11", team1: "Samsung", team2: "Doosan", feeling: 1, attendance: "집관" },
+  { id: 3, result: "승리", score: "11 - 5", team1: "Kia", team2: "KT", feeling: 5, attendance: "직관" },
+  { id: 4, result: "승리", score: "11 - 5", team1: "NC", team2: "LG", feeling: 2, attendance: "집관" },
+  { id: 5, result: "패배", score: "7 - 3", team1: "Hanwha", team2: "Lotte", feeling: 4, attendance: "직관" },
+];
+
 interface GameRecord {
   id: number;
   result: "승리" | "패배";
@@ -96,14 +106,13 @@ interface GameRecord {
   attendance: "직관" | "집관";
 }
 
-// dummy data에 attendance 필드 추가 (더 필요하면 추가 가능)
-const dummyGames: GameRecord[] = [
-  { id: 1, result: "승리", score: "11 - 5", team1: "Hanwha", team2: "Lotte", feeling: 3, attendance: "직관" },
-  { id: 2, result: "패배", score: "5 - 11", team1: "Samsung", team2: "Doosan", feeling: 1, attendance: "집관" },
-  { id: 3, result: "승리", score: "11 - 5", team1: "Kia", team2: "KT", feeling: 5, attendance: "직관" },
-  { id: 4, result: "승리", score: "11 - 5", team1: "NC", team2: "LG", feeling: 2, attendance: "집관" },
-  { id: 5, result: "패배", score: "7 - 3", team1: "Hanwha", team2: "Lotte", feeling: 4, attendance: "직관" },
-];
+interface TeamStat {
+  teamWins: number;
+  teamLosses: number;
+  teamDraws: number;
+  teamGames: number;
+  teamWinRate: number;
+}
 
 // 내 팀(dummyMyTeam)과 한글 팀 이름 매핑 (kbo 제외)
 const dummyMyTeam = "hanhwa";
@@ -126,10 +135,20 @@ const Diary = () => {
   const [selectedYear, setSelectedYear] = useState(2024);
   // 탭 상태: "직관" 또는 "집관"
   const [activeAttendance, setActiveAttendance] = useState<"직관" | "집관">("직관");
+  // 팀 통계 상태
+  const [teamStat, setTeamStat] = useState<TeamStat | null>(null);
 
   useEffect(() => {
-    // dummy data 사용
+    // dummy data 사용 (게임 기록 부분)
+    // 실제 API 연결 시 gameRecords API 호출 부분으로 대체 가능
     setGameRecords(dummyGames);
+  }, [selectedYear]);
+
+  // selectedYear 변경 시 팀 통계 API 호출 (실제 API 연결)
+  useEffect(() => {
+    getTeamStat(selectedYear)
+      .then((stat) => setTeamStat(stat))
+      .catch((error) => console.error("팀 통계 가져오기 실패", error));
   }, [selectedYear]);
 
   const filteredRecords = gameRecords.filter(
@@ -174,9 +193,7 @@ const Diary = () => {
           {[2024, 2023, 2022, 2021, 2020].map((year) => (
             <button
               key={year}
-              onClick={() => {
-                setSelectedYear(year);
-              }}
+              onClick={() => setSelectedYear(year)}
               style={{
                 padding: "0.5rem 1rem",
                 borderRadius: "0.375rem",
@@ -210,8 +227,18 @@ const Diary = () => {
             }}
           >
             <p style={{ color: "#EF4444", fontSize: "0.875rem" }}>나의 직관</p>
-            <p style={{ fontSize: "1.125rem", fontWeight: "bold" }}>6승 1패 0무/7경기</p>
-            <p style={{ color: "#EF4444", fontSize: "1.5rem", fontWeight: "bold" }}>86%</p>
+            {teamStat ? (
+              <>
+                <p style={{ fontSize: "1.125rem", fontWeight: "bold" }}>
+                  {teamStat.teamWins}승 {teamStat.teamLosses}패 {teamStat.teamDraws}무 / {teamStat.teamGames}경기
+                </p>
+                <p style={{ color: "#EF4444", fontSize: "1.5rem", fontWeight: "bold" }}>
+                  {teamStat.teamWinRate}%
+                </p>
+              </>
+            ) : (
+              <p>로딩중...</p>
+            )}
           </div>
           <div
             style={{
@@ -244,7 +271,7 @@ const Diary = () => {
         </TabContainer>
       </FixedTopContainer>
 
-      {/* Game List: 고정 영역 높이(예: 300px)만큼 margin-top 적용 */}
+      {/* Game List */}
       <div style={{ padding: "1rem", marginTop: "380px", height: "calc(100vh - 300px)", overflowY: "auto" }}>
         {filteredRecords.map((game) => {
           const [score1, score2] = game.score.split(" - ").map(Number);
@@ -323,7 +350,7 @@ const Diary = () => {
         })}
       </div>
 
-      {/* WriteButton: 글쓰기 버튼 항상 보이도록 */}
+      {/* WriteButton */}
       <WriteButton onClick={() => navigate("/diary/new")}>
         <FaEdit size={24} color="white" />
       </WriteButton>
