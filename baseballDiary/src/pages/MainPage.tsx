@@ -1,9 +1,8 @@
-// MainPage.tsx (방법 1 - 모든 스타일을 인라인으로 적용)
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BottomSheet } from "react-spring-bottom-sheet";
 import "react-spring-bottom-sheet/dist/style.css";
 import "../components/Navbar";
-import "../../styles.css";  // 다른 전역 스타일이 있다면 그대로 유지
+import "../../styles.css";
 
 // 이미지 및 아이콘 임포트
 import BevoliLogo from "../assets/main/BevoliLogo.svg";
@@ -14,11 +13,15 @@ import RecentIcon from "../assets/main/RecentIcon.svg";
 import OldestIcon from "../assets/main/OldestIcon.svg";
 
 const MainPage: React.FC = () => {
-  // 상태 및 임시 데이터
   const [attendanceMonth, setAttendanceMonth] = useState<number>(1);
   const [sortOrder, setSortOrder] = useState<"recent" | "oldest">("recent");
-  const userName = "000";
-  const baseballTemp = 88;
+
+  // API로부터 받아올 데이터: nickname과 temperature
+  const [nickname, setNickname] = useState<string>("");
+  const [temperature, setTemperature] = useState<number>(0);
+  // 백엔드로부터 받아온 gameInfo는 사용하지 않습니다.
+  const [gameInfo, setGameInfo] = useState<any>(null);
+
   const tempPercent = 0;
   const attendanceCount = 23;
   const attendanceMax = 30;
@@ -40,8 +43,27 @@ const MainPage: React.FC = () => {
 
   const displayedMatches = sortOrder === "recent" ? recentMatches : oldestMatches;
 
+  // API 호출: /info 엔드포인트로부터 사용자 정보 받아오기
+  useEffect(() => {
+    fetch("/info", {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setNickname(data.nickname);
+        setGameInfo(data.gameInfo); // 받아오긴 하지만 사용하지 않습니다.
+        // temperature 정보가 있을 경우 업데이트 (없으면 기본값 0 유지)
+        if (data.gameInfo && typeof data.gameInfo === "object" && data.gameInfo.temperature) {
+          setTemperature(data.gameInfo.temperature);
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to fetch user info:", error);
+      });
+  }, []);
+
   return (
-    // 루트 div: 배경 그라데이션, 최소 높이, 텍스트 흰색, 상대 위치 지정
     <div
       style={{
         background: "linear-gradient(to bottom, #ef4444, #fb923c)",
@@ -50,7 +72,6 @@ const MainPage: React.FC = () => {
         position: "relative",
       }}
     >
-      {/* 배경 콘텐츠 영역 */}
       <div style={{ zIndex: 0 }}>
         {/* 헤더 */}
         <header
@@ -82,55 +103,28 @@ const MainPage: React.FC = () => {
           }}
         >
           <p style={{ fontSize: "1.125rem" }}>
-            안녕하세요! <span style={{ fontWeight: "bold" }}>{userName}님</span>
+            안녕하세요! <span style={{ fontWeight: "bold" }}>{nickname}</span>
             <br />
             오늘의 경기를 확인해보세요.
           </p>
         </section>
 
-        {/* 경기 예정 카드 */}
-        <section
-          style={{
-            backgroundColor: "white",
-            color: "black",
-            borderRadius: "0.75rem", // rounded-xl
-            margin: "0 1rem",        // mx-4
-            padding: "1rem",         // p-4
-            boxShadow:
-              "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)", // shadow-lg
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src={LotteLogo}
-              alt="Lotte Logo"
-              style={{ transform: "scale(1.8)",height: "2.5rem", width: "2.5rem" }} // h-10 w-10
-            />
+        {/* 경기 예정 카드 - 항상 "오늘의 경기가 없습니다."로 고정 */}
+        
+          
             <div style={{ textAlign: "center" }}>
-              <p style={{ fontSize: "0.875rem", color: "#6B7280" }}>경기 예정</p>
-              <p style={{ fontSize: "1.25rem", fontWeight: "bold" }}>18:00</p>
+              <p style={{ fontSize: "2.5rem", fontWeight: "bold" }}>
+                오늘의 경기가 없습니다.
+              </p>
             </div>
-            <img
-              src={HanwhaLogo}
-              alt="Hanwha Logo"
-              style={{transform: "scale(1.8)", height: "2.5rem", width: "2.5rem" }} // h-10 w-10
-            />
-          </div>
-        </section>
       </div>
 
       {/* BottomSheet 영역 */}
       <BottomSheet
         open={true}
         blocking={false}
-        defaultSnap={() => 250} // 기본 높이
-        snapPoints={() => [500, 850]} // 최소 및 최대 높이
+        defaultSnap={() => 250}
+        snapPoints={() => [500, 850]}
         header={
           <div
             style={{
@@ -138,15 +132,15 @@ const MainPage: React.FC = () => {
               display: "flex",
               justifyContent: "center",
               padding: "0.5rem",
-              pointerEvents: "auto", // 헤더 부분의 pointer-events 활성화
+              pointerEvents: "auto",
             }}
           >
             <div
               style={{
-                width: "3rem", // w-12 (3rem)
-                height: "0.25rem", // h-1 (0.25rem)
-                borderRadius: "9999px", // rounded-full
-                backgroundColor: "#D1D5DB", // bg-gray-300
+                width: "3rem",
+                height: "0.25rem",
+                borderRadius: "9999px",
+                backgroundColor: "#D1D5DB",
               }}
             ></div>
           </div>
@@ -155,8 +149,8 @@ const MainPage: React.FC = () => {
         <div
           style={{
             padding: "0 1rem",
-            paddingBottom: "5rem", // pb-20 (approx.)
-            pointerEvents: "auto", // 내부 컨텐츠의 pointer-events 활성화
+            paddingBottom: "5rem",
+            pointerEvents: "auto",
           }}
         >
           {/* 나의 야구온도 카드 */}
@@ -171,7 +165,9 @@ const MainPage: React.FC = () => {
               marginBottom: "1rem",
             }}
           >
-            <p style={{ fontSize: "1rem", fontWeight: 600 }}>나의 야구온도는?</p>
+            <p style={{ fontSize: "1rem", fontWeight: 600 }}>
+              나의 야구온도는?
+            </p>
             <div style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}>
               <span
                 style={{
@@ -180,7 +176,7 @@ const MainPage: React.FC = () => {
                   color: "#EF4444",
                 }}
               >
-                {baseballTemp}°
+                {temperature}°
               </span>
               <div
                 style={{
@@ -197,7 +193,7 @@ const MainPage: React.FC = () => {
                     backgroundColor: "#EF4444",
                     height: "100%",
                     transition: "all 300ms",
-                    width: `${baseballTemp}%`,
+                    width: `${temperature}%`,
                   }}
                 ></div>
               </div>
@@ -294,11 +290,10 @@ const MainPage: React.FC = () => {
             >
               {directWatchCount}회의 직관 중 {directWatchWin}회 승리했어요.
             </p>
-            {/* 아이콘 버튼을 오른쪽 정렬하고, 크기를 키움 */}
             <div
               style={{
                 display: "flex",
-                justifyContent: "flex-end", // 오른쪽 정렬
+                justifyContent: "flex-end",
                 alignItems: "center",
                 marginBottom: "1rem",
               }}
@@ -310,7 +305,7 @@ const MainPage: React.FC = () => {
                   )
                 }
                 style={{
-                  width: "3rem",   // 버튼 크기를 약간 키움
+                  width: "3rem",
                   height: "3rem",
                   display: "flex",
                   alignItems: "center",
@@ -328,9 +323,10 @@ const MainPage: React.FC = () => {
                       ? "최근순 아이콘"
                       : "오래된순 아이콘"
                   }
-                  style={{ transform: "scale(2) translateX(-20%)", // 2배 확대
-                    width: "50rem !important", height: "50rem !important" }}
-                  />
+                  style={{
+                    transform: "scale(2) translateX(-20%)",
+                  }}
+                />
               </button>
             </div>
             <ul
