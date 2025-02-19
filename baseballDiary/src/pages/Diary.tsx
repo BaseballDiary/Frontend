@@ -96,6 +96,13 @@ interface GameRecord {
   team2: string;
   feeling: number;
   attendance: "직관" | "집관";
+  // 상세페이지로 전달할 추가 필드들 (dummy 데이터)
+  date?: string;
+  dayOfWeek?: string;
+  time?: string;
+  location?: string;
+  uploadImages?: string;
+  content?: string;
 }
 
 // 팀 통계 인터페이스 (나의 직관 통계)
@@ -116,13 +123,39 @@ interface MyStat {
   myWinRate: number;
 }
 
-// dummy data (게임 기록)
+// dummy 데이터 (게임 기록)
 const dummyGames: GameRecord[] = [
-  { id: 1, result: "승리", score: "11 - 5", team1: "Hanwha", team2: "Lotte", feeling: 3, attendance: "직관" },
-  { id: 2, result: "패배", score: "5 - 11", team1: "Samsung", team2: "Doosan", feeling: 1, attendance: "집관" },
-  { id: 3, result: "승리", score: "11 - 5", team1: "Kia", team2: "KT", feeling: 5, attendance: "직관" },
-  { id: 4, result: "승리", score: "11 - 5", team1: "NC", team2: "LG", feeling: 2, attendance: "집관" },
-  { id: 5, result: "패배", score: "7 - 3", team1: "Hanwha", team2: "Lotte", feeling: 4, attendance: "직관" },
+  {
+    id: 1,
+    result: "승리",
+    score: "11 - 5",
+    team1: "Hanwha",
+    team2: "Lotte",
+    feeling: 3,
+    attendance: "직관",
+    date: "2024-09-16",
+    dayOfWeek: "월",
+    time: "14:00",
+    location: "잠실",
+    uploadImages: "https://dummyimage.com/600x400/000/fff",
+    content: "오늘 경기는 정말 재미있었어!",
+  },
+  {
+    id: 2,
+    result: "패배",
+    score: "5 - 11",
+    team1: "Samsung",
+    team2: "Doosan",
+    feeling: 1,
+    attendance: "집관",
+    date: "2024-09-16",
+    dayOfWeek: "월",
+    time: "14:00",
+    location: "잠실",
+    uploadImages: "https://dummyimage.com/600x400/000/fff",
+    content: "아쉽게도 패배했습니다.",
+  },
+  // 추가 dummy 데이터...
 ];
 
 // 내 팀(dummyMyTeam)과 한글 팀 이름 매핑 (kbo 제외)
@@ -152,7 +185,7 @@ const Diary = () => {
   const [myStat, setMyStat] = useState<MyStat | null>(null);
 
   useEffect(() => {
-    // 현재 게임 기록은 dummy data로 처리 (실제 API 연동 시 대체 가능)
+    // 현재 게임 기록은 dummy 데이터로 처리 (실제 API 연동 시 대체 가능)
     setGameRecords(dummyGames);
   }, [selectedYear]);
 
@@ -327,16 +360,10 @@ const Diary = () => {
                 marginBottom: "0.5rem",
                 cursor: "pointer",
               }}
-              // 터치 시 DiaryDetail 페이지로 이동 (dummy 데이터에 diaryImage와 contents 추가)
+              // 게임 카드 터치 시, 상세 페이지로 이동 (모든 필드 전달)
               onClick={() =>
                 navigate("/diary/detail", {
-                  state: {
-                    game: {
-                      ...game,
-                      diaryImage: "https://dummyimage.com/600x400/000/fff", // 일기 사진이 있는 경우
-                      contents: "오늘 경기는 정말 재미있었어!", // 일기 내용
-                    },
-                  },
+                  state: { game },
                 })
               }
             >
@@ -346,6 +373,7 @@ const Diary = () => {
                 style={{ width: "48px", height: "48px", marginRight: "12px" }}
               />
               <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                {/* 날짜/시간/요일/장소 모두 표시 */}
                 <div
                   style={{
                     display: "flex",
@@ -355,8 +383,10 @@ const Diary = () => {
                     marginBottom: "8px",
                   }}
                 >
-                  <p>01.45(수) 18:00</p>
-                  <p>잠실</p>
+                  <p>
+                    {game.date} ({game.dayOfWeek}) {game.time}
+                  </p>
+                  <p>{game.location}</p>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>

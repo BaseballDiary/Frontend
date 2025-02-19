@@ -66,15 +66,19 @@ interface GameRecordDetail {
   team2: string;
   feeling: number;
   attendance: "직관" | "집관";
-  diaryImage?: string; // 일기 사진 URL, 있을 수도 있고 없을 수도 있음
-  contents: string; // 일기 내용
+  // 새 필드들
+  uploadImages?: string; // 일기 사진 URL
+  content: string; // 일기 내용
+  date: string; // 예: "2024-09-16"
+  dayOfWeek: string; // 예: "월"
+  time: string; // 예: "14:00"
+  location: string; // 예: "잠실"
 }
 
 const DiaryDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // location.state.game 에 전달한 데이터를 사용합니다.
-  // 만약 데이터가 없다면 dummy 데이터를 사용합니다.
   const game: GameRecordDetail =
     (location.state && location.state.game) || {
       id: 0,
@@ -84,8 +88,12 @@ const DiaryDetail = () => {
       team2: "Lotte",
       feeling: 3,
       attendance: "직관",
-      diaryImage: "https://dummyimage.com/600x400/000/fff",
-      contents: "오늘 경기는 정말 재미있었어!",
+      uploadImages: "https://dummyimage.com/600x400/000/fff",
+      content: "오늘 경기는 정말 재미있었어!",
+      date: "2024-09-16",
+      dayOfWeek: "월",
+      time: "14:00",
+      location: "잠실",
     };
 
   // 감정 아이콘 매핑
@@ -130,9 +138,20 @@ const DiaryDetail = () => {
             style={{ width: "48px", height: "48px", marginRight: "12px" }}
           />
           <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", color: "#6B7280", fontSize: "0.875rem", marginBottom: "8px" }}>
-              <p>01.45(수) 18:00</p>
-              <p>잠실</p>
+            {/* 날짜/시간/장소 정보를 별도 필드로 표시 */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                color: "#6B7280",
+                fontSize: "0.875rem",
+                marginBottom: "8px",
+              }}
+            >
+              <p>
+                {game.date} ({game.dayOfWeek}) {game.time}
+              </p>
+              <p>{game.location}</p>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
@@ -165,16 +184,16 @@ const DiaryDetail = () => {
           </div>
         </div>
 
-        {/* 일기 사진 (있다면) */}
-        {game.diaryImage && (
+        {/* 일기 사진 (uploadImages 필드가 있으면 표시) */}
+        {game.uploadImages && (
           <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-            <img src={game.diaryImage} alt="Diary" style={{ maxWidth: "100%" }} />
+            <img src={game.uploadImages} alt="Diary" style={{ maxWidth: "100%" }} />
           </div>
         )}
 
-        {/* 일기 내용 */}
+        {/* 일기 내용 (content 필드) */}
         <div style={{ padding: "1rem", backgroundColor: "#f9f9f9", borderRadius: "0.5rem" }}>
-          <p style={{ fontSize: "1rem", lineHeight: "1.5" }}>{game.contents}</p>
+          <p style={{ fontSize: "1rem", lineHeight: "1.5" }}>{game.content}</p>
         </div>
       </div>
     </div>
