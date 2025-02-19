@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaPlus, FaEdit } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import styled from "styled-components";
 import { getTeamStat, getMyStat } from "../api/MydiaryApi"; // 팀 통계 API 함수들
 
@@ -165,12 +165,6 @@ const Diary = () => {
 
   // selectedYear 변경 시 우리팀 통계 API 호출
   useEffect(() => {
-    // 실제 API 호출: getMyStat(selectedYear)
-    // 예시:
-    // getMyStat(selectedYear)
-    //   .then((stat) => setMyStat(stat))
-    //   .catch((error) => console.error("내 팀 통계 가져오기 실패", error));
-    // 아래는 실제 API 호출 코드입니다.
     getMyStat(selectedYear)
       .then((stat) => setMyStat(stat))
       .catch((error) => console.error("내 팀 통계 가져오기 실패", error));
@@ -331,7 +325,20 @@ const Diary = () => {
                 boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
                 border: "1px solid #E5E7EB",
                 marginBottom: "0.5rem",
+                cursor: "pointer",
               }}
+              // 터치 시 DiaryDetail 페이지로 이동 (dummy 데이터에 diaryImage와 contents 추가)
+              onClick={() =>
+                navigate("/diary/detail", {
+                  state: {
+                    game: {
+                      ...game,
+                      diaryImage: "https://dummyimage.com/600x400/000/fff", // 일기 사진이 있는 경우
+                      contents: "오늘 경기는 정말 재미있었어!", // 일기 내용
+                    },
+                  },
+                })
+              }
             >
               <img
                 src={feelingIcons[game.feeling] || feeling1}

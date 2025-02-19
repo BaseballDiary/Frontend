@@ -21,6 +21,7 @@ import "../styles.css"
 import Mydiary from './pages/Mydiary';
 import Diary from './pages/Diary';
 import DiaryNew from './pages/DiaryNew';
+import DiaryDetail from './pages/DiaryDetail';
 
 
 const router = createBrowserRouter([
@@ -68,9 +69,9 @@ const router = createBrowserRouter([
         path: 'diary',
         children: [
           { index: true, element: <Diary /> },
-          { path: ':year', element: <h1>피그마 - 다이어리 - 연도별 일기</h1> },
+          { path: 'year', element: <h1>피그마 - 다이어리 - 연도별 일기</h1> },
           { path: 'new', element: <DiaryNew /> },
-          { path: ':diaryId', element: <h1>피그마 - 다이어리 - 특정 직관 일기</h1> },
+          { path: 'detail', element: <DiaryDetail /> },
         ],
       },
       {
