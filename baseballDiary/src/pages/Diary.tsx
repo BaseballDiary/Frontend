@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import styled from "styled-components";
-import { getTeamStat, getMyStat } from "../api/MydiaryApi"; // 팀 통계 API 함수들
+import { getTeamStat, getMyStat, getDiary, DiaryResponse } from "../api/MydiaryApi";
 
 // 팀 로고 import
 import lotte from "../assets/team/lotte.png";
@@ -24,7 +24,7 @@ import feeling3 from "../assets/feeling/feeling3.svg";
 import feeling4 from "../assets/feeling/feeling4.svg";
 import feeling5 from "../assets/feeling/feeling5.svg";
 
-// Styled WriteButton: 항상 보이는 글쓰기 버튼
+// Styled WriteButton
 const WriteButton = styled.button`
   position: fixed;
   bottom: 80px;
@@ -42,7 +42,7 @@ const WriteButton = styled.button`
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
-// FixedTopContainer: 헤더부터 직관/집관 탭까지 고정
+// FixedTopContainer: 헤더부터 탭까지 고정 영역
 const FixedTopContainer = styled.div`
   position: fixed;
   top: 0;
@@ -52,15 +52,13 @@ const FixedTopContainer = styled.div`
   z-index: 99;
 `;
 
-// Styled TabContainer (고정 영역 내부에 포함)
+// TabContainer 및 Tab
 const TabContainer = styled.div`
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid #e5e7eb;
 `;
-
-// Styled Tab (active 상태에 따라 스타일 변경)
 const Tab = styled.div<{ $active?: boolean }>`
   flex: 1;
   text-align: center;
@@ -87,8 +85,8 @@ const teamLogos: { [key: string]: string } = {
   KBO: kbo,
 };
 
-// 게임 기록 인터페이스
-interface GameRecord {
+// 게임 기록 인터페이스 (Diary 페이지에서 사용하는 인터페이스)
+interface GameRecordDisplay {
   id: number;
   result: "승리" | "패배";
   score: string;
@@ -96,16 +94,15 @@ interface GameRecord {
   team2: string;
   feeling: number;
   attendance: "직관" | "집관";
-  // 상세페이지로 전달할 추가 필드들 (dummy 데이터)
   date?: string;
   dayOfWeek?: string;
   time?: string;
   location?: string;
-  uploadImages?: string;
+  uploadImages?: any;
   content?: string;
 }
 
-// 팀 통계 인터페이스 (나의 직관 통계)
+// 통계 인터페이스
 interface TeamStat {
   teamWins: number;
   teamLosses: number;
@@ -113,8 +110,6 @@ interface TeamStat {
   teamGames: number;
   teamWinRate: number;
 }
-
-// 내 팀 통계 인터페이스 (우리팀 통계)
 interface MyStat {
   myWins: number;
   myLosses: number;
@@ -123,91 +118,56 @@ interface MyStat {
   myWinRate: number;
 }
 
-// dummy 데이터 (게임 기록)
-const dummyGames: GameRecord[] = [
-  {
-    id: 1,
-    result: "승리",
-    score: "11 - 5",
-    team1: "Hanwha",
-    team2: "Lotte",
-    feeling: 3,
-    attendance: "직관",
-    date: "2024-09-16",
-    dayOfWeek: "월",
-    time: "14:00",
-    location: "잠실",
-    uploadImages: "https://dummyimage.com/600x400/000/fff",
-    content: "오늘 경기는 정말 재미있었어!",
-  },
-  {
-    id: 2,
-    result: "패배",
-    score: "5 - 11",
-    team1: "Samsung",
-    team2: "Doosan",
-    feeling: 1,
-    attendance: "집관",
-    date: "2024-09-16",
-    dayOfWeek: "월",
-    time: "14:00",
-    location: "잠실",
-    uploadImages: "https://dummyimage.com/600x400/000/fff",
-    content: "아쉽게도 패배했습니다.",
-  },
-  // 추가 dummy 데이터...
-];
-
-// 내 팀(dummyMyTeam)과 한글 팀 이름 매핑 (kbo 제외)
-const dummyMyTeam = "hanhwa";
-const teamNames: { [key: string]: string } = {
-  lotte: "롯데",
-  doosan: "두산",
-  samsung: "삼성",
-  kiwoom: "키움",
-  hanhwa: "한화",
-  kia: "기아",
-  kt: "KT",
-  nc: "NC",
-  lg: "LG",
-  ssg: "SSG",
-};
-
 const Diary = () => {
   const navigate = useNavigate();
-  const [gameRecords, setGameRecords] = useState<GameRecord[]>([]);
+  const [diaryList, setDiaryList] = useState<GameRecordDisplay[]>([]);
   const [selectedYear, setSelectedYear] = useState(2024);
-  // 탭 상태: "직관" 또는 "집관"
   const [activeAttendance, setActiveAttendance] = useState<"직관" | "집관">("직관");
-  // 팀 통계 상태 (나의 직관)
   const [teamStat, setTeamStat] = useState<TeamStat | null>(null);
-  // 내 팀 통계 상태 (우리팀)
   const [myStat, setMyStat] = useState<MyStat | null>(null);
 
+  // API 호출: Diary (일기) 데이터
   useEffect(() => {
-    // 현재 게임 기록은 dummy 데이터로 처리 (실제 API 연동 시 대체 가능)
-    setGameRecords(dummyGames);
-  }, [selectedYear]);
+    // 탭에 따라 엔드포인트의 쿼리 파라미터 결정
+    const attendanceType = activeAttendance === "직관" ? "onSite" : "atHome";
+    getDiary(`${selectedYear}`, attendanceType)
+      .then((data: DiaryResponse) => {
+        console.log("Diary API Response:", data);
+        const diaryListFromApi: GameRecordDisplay[] = data.data.diaryList.map((d, index) => ({
+          id: index,
+          result: d.result ? "승리" : "패배",
+          score: `${d.score.myScore} - ${d.score.opponentScore}`,
+          team1: d.score.myTeam,
+          team2: d.score.opponentTeam,
+          feeling: d.feeling,
+          attendance: activeAttendance,
+          date: d.date,
+          dayOfWeek: d.dayOfWeek,
+          time: d.time,
+          location: d.stadium, // stadium 필드를 location으로 매핑
+          uploadImages: d.uploadImages,
+          content: d.content,
+        }));
+        setDiaryList(diaryListFromApi);
+      })
+      .catch((error) => console.error("Diary API fetch error:", error));
+  }, [selectedYear, activeAttendance]);
 
-  // selectedYear 변경 시 나의 직관 통계 API 호출
+  // API 호출: 나의 직관 통계
   useEffect(() => {
-    // 연도를 문자열로 보내도록 수정
-    getTeamStat(`${selectedYear}`)
+    getTeamStat(selectedYear)
       .then((stat) => setTeamStat(stat))
       .catch((error) => console.error("팀 통계 가져오기 실패", error));
   }, [selectedYear]);
 
-  // selectedYear 변경 시 우리팀 통계 API 호출
+  // API 호출: 우리팀 통계
   useEffect(() => {
-    // 연도를 문자열로 보내도록 수정
-    getMyStat(`${selectedYear}`)
+    getMyStat(selectedYear)
       .then((stat) => setMyStat(stat))
       .catch((error) => console.error("내 팀 통계 가져오기 실패", error));
   }, [selectedYear]);
 
-  const filteredRecords = gameRecords.filter(
-    (record) => record.attendance === activeAttendance
-  );
+  const filteredRecords = diaryList; // API 결과 그대로 사용
 
   return (
     <div
@@ -219,9 +179,7 @@ const Diary = () => {
         paddingBottom: "4rem",
       }}
     >
-      {/* 고정된 상단 영역: Header, Year Tabs, Statistics, 직관/집관 탭 */}
       <FixedTopContainer>
-        {/* Header */}
         <header
           style={{
             backgroundColor: "#EF4444",
@@ -234,8 +192,6 @@ const Diary = () => {
         >
           야구일기
         </header>
-
-        {/* Year Tabs */}
         <div
           style={{
             display: "flex",
@@ -263,8 +219,6 @@ const Diary = () => {
             </button>
           ))}
         </div>
-
-        {/* Statistics */}
         <div
           style={{
             display: "flex",
@@ -317,8 +271,6 @@ const Diary = () => {
             )}
           </div>
         </div>
-
-        {/* 직관/집관 탭 */}
         <TabContainer>
           <Tab
             $active={activeAttendance === "직관"}
@@ -334,8 +286,6 @@ const Diary = () => {
           </Tab>
         </TabContainer>
       </FixedTopContainer>
-
-      {/* Game List */}
       <div style={{ padding: "1rem", marginTop: "380px", height: "calc(100vh - 300px)", overflowY: "auto" }}>
         {filteredRecords.map((game) => {
           const [score1, score2] = game.score.split(" - ").map(Number);
@@ -347,7 +297,6 @@ const Diary = () => {
             4: feeling4,
             5: feeling5,
           };
-
           return (
             <div
               key={game.id}
@@ -391,11 +340,13 @@ const Diary = () => {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
                     <img
-                      src={teamLogos["Hanwha"]}
-                      alt="Hanwha"
+                      src={teamLogos[game.team1] || ""}
+                      alt={game.team1}
                       style={{ width: "40px", height: "40px" }}
                     />
-                    <p style={{ fontSize: "0.875rem", marginTop: "4px", fontWeight: "bold" }}>한화</p>
+                    <p style={{ fontSize: "0.875rem", marginTop: "4px", fontWeight: "bold" }}>
+                      {game.team1 && game.team1.toLowerCase() in teamLogos ? teamLogos[game.team1] : ""}
+                    </p>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, textAlign: "center" }}>
                     <p style={{ fontWeight: "bold", color: game.result === "승리" ? "#10B981" : "#EF4444" }}>
@@ -409,11 +360,13 @@ const Diary = () => {
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "80px" }}>
                     <img
-                      src={teamLogos["Lotte"]}
-                      alt="Lotte"
+                      src={teamLogos[game.team2] || ""}
+                      alt={game.team2}
                       style={{ width: "40px", height: "40px" }}
                     />
-                    <p style={{ fontSize: "0.875rem", marginTop: "4px", fontWeight: "bold" }}>롯데</p>
+                    <p style={{ fontSize: "0.875rem", marginTop: "4px", fontWeight: "bold" }}>
+                      {game.team2 && game.team2.toLowerCase() in teamLogos ? teamLogos[game.team2] : ""}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -421,8 +374,6 @@ const Diary = () => {
           );
         })}
       </div>
-
-      {/* WriteButton */}
       <WriteButton onClick={() => navigate("/diary/new")}>
         <FaEdit size={24} color="white" />
       </WriteButton>
