@@ -21,6 +21,7 @@
     "react-router-dom": "^7.1.1",
     "react-spring": "^9.7.5",
     "react-spring-bottom-sheet": "3.5.0-alpha.0",
+    "serve": "^14.2.4",
     "styled-components": "^6.1.14"
   },
   "devDependencies": {

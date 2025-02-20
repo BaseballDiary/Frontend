@@ -7,7 +7,7 @@
   width: 100vw;
   min-height: 100vh; 
   padding: 20px; /*모바일에서도 자연스럽게 보이기 위해 패딩 추가*/
-  background-color: #f5f5f5;
+  background-color: white;
 }
 
 .signup-box {
@@ -21,6 +21,26 @@
   box-sizing: border-box; /*패딩 포함한 크기 유지 */
 }
 
+.email-check-message {
+  font-family: 'NanumSquareRound';
+  font-weight: 400;
+  color: #EA2F3E; 
+  font-size: 14px; 
+  margin-top: 4px; 
+}
+
+.sendVerificationCode-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #EA2F3E;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* 본인확인 버튼 스타일 */
 .verify-button {
   width: 100%;
   padding: 10px;
@@ -32,9 +52,43 @@
   margin-bottom: 10px;
 }
 
+/* 본인확인 완료 스타일 */
+.confirmed { 
+  background-color: #2CCF53;
+}
+
+.validation-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.validation-list li {
+  font-size: 14px;
+  font-weight: bold;
+  color: gray; /* 기본 색상 */
+}
+
+.validation-list .valid {
+  color: #2CCF53; /* ✅ 충족된 조건 - 초록색 */
+}
+
+.validation-list .invalid {
+  color: gray; /* ❌ 충족되지 않은 조건 - 회색 */
+}
+
+.error-text {
+  font-family: 'NanumSquareRound';
+  font-weight: 400;
+  color: #EA2F3E; 
+  font-size: 14px; 
+  margin-top: 4px; 
+}
+
 .signup-button:disabled {
   background-color: #AAABAC;
-  cursor: not-allowed;
 }
 
 /*제목 스타일링*/

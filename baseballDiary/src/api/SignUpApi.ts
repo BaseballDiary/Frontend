@@ -1,9 +1,9 @@
 import axios from "axios";
 
-// 이메일 인증 번호 요청 API 호출 함수수
+// 이메일 인증 번호 요청 API 호출 함수
 export const requestVerificationCode = async (email: string): Promise<void> => {
   try {
-    const response = await axios.post("https://api.baseballdiary.shop:8080/auth", {
+    const response = await axios.post("https://api.baseballdiary.shop/auth", {
       email
     });
     return response.data;
@@ -28,13 +28,19 @@ export const confirmVerificationCode = async (email: string, authNumber: string)
 };
 
 // 회원가입 API 호출 함수
-export const signup = async (email: string, password: string, passwordConfirm:string): Promise<any> => {
+export const signup = async (email: string, password: string, passwordConfirm: string): Promise<any> => {
   try {
-    const response = await axios.post("https://api.baseballdiary.shop/user", {
-      email,
-      password,
-      passwordConfirm
-    });
+    const response = await axios.post(
+      "https://api.baseballdiary.shop/user",
+      {
+        email,
+        password,
+        passwordConfirm,
+      },
+      {
+        withCredentials: true,
+      }
+    );
     return response.data; // 응답 데이터를 반환
   } catch (error) {
     console.error("회원가입 실패:", error);
