@@ -19,6 +19,8 @@ import PostDetail from './pages/community/PostDetail';
 import { Navigate } from "react-router-dom"; // 👈 추가
 import "../styles.css"
 import Mydiary from './pages/Mydiary';
+import CommunityWrite from './pages/community/CommunityWrite';
+import MyPage from "./pages/myPage/myPage"
 
 const router = createBrowserRouter([
   {
@@ -58,7 +60,9 @@ const router = createBrowserRouter([
           { index: true, element: <Navigate to="/community/all" replace /> },  // 기본 경로 설정
           { path: 'all', element: <CommunityTotal/> },
           { path: 'popular', element: <CommunityPopular /> },
-          { path: 'post/:postId', element: <PostDetail /> }
+          { path: 'post/:postId', element: <PostDetail /> },
+          { path: 'write', element: <CommunityWrite />}
+          //{ path: 'search', element: <CommunitySearch />}
         ],
       },
       {
@@ -73,7 +77,7 @@ const router = createBrowserRouter([
       {
         path: 'mypage',
         children: [
-          { index: true, element: <h1>마이페이지 - 프로필</h1> },
+          { index: true, element: <MyPage/> },
           { path: 'edit', element: <h1>프로필 수정</h1> },
         ],
       },

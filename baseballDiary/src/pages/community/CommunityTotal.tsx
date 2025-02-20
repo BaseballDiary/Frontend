@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaEdit } from "react-icons/fa"; // 글쓰기 아이콘
 import teamLogos from "../../assets/teamLogos"; // 팀 아이콘 배열
+import pencil from "../../assets/pencil.png"
+import searchIcon from "../../assets/search.png";
 import lotte from "../../assets/team/lotte.png";
 import doosan from "../../assets/team/doosan.png";
 import samsung from "../../assets/team/samsung.png";
@@ -46,7 +47,7 @@ const CommunityTotal = () => {
       {/* 상단 네비게이션 */}
       <Header>
         <Title>커뮤니티</Title>
-        <SearchIcon>🔍</SearchIcon>
+        <img src={searchIcon} alt="search" width="20" height="20" />
       </Header>
 
       {/* 탭 메뉴 */}
@@ -126,8 +127,8 @@ const CommunityTotal = () => {
       </PostList>
 
       {/* 글쓰기 버튼 */}
-      <WriteButton>
-        <FaEdit size={24} color="white" />
+      <WriteButton onClick={() => navigate("/community/write")}>
+      <img src={pencil} alt="write" width="23" height="23" />
       </WriteButton>
     </Container>
   );
@@ -162,6 +163,8 @@ const Header = styled.div`
 const Title = styled.h2`
   color: white;
   font-size: 18px;
+  text-align: center;
+  flex: 1;
 `;
 
 const SearchIcon = styled.div`

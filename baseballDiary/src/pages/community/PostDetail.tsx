@@ -14,6 +14,7 @@ const PostDetail = () => {
     { id: 1, username: "사용자 이름", content: "댓글 내용입니다." },
     { id: 2, username: "다른 사용자", content: "좋은 정보 감사합니다!" },
   ]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleAddComment = () => {
     if (commentText.trim() !== "") {
@@ -23,8 +24,13 @@ const PostDetail = () => {
   };
 
   const handleDelete = () => {
-    console.log(`게시글 ${postId} 삭제`);
-    setMenuOpen(null);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    console.log('게시글 ${postId} 삭제');
+    setShowDeleteModal(false);
+    navigate(-1);
   };
 
   return (
@@ -62,7 +68,8 @@ const PostDetail = () => {
           <PostMeta>
             <Icon>💬</Icon>
             <span>2</span>
-            <Icon>❤️</Icon>
+            {/*<Icon>❤️</Icon>*/}
+            <img src={heart} alt="heart" width="14" height="14" />
             <span>5</span>
           </PostMeta>
         </PostContent>
@@ -79,7 +86,7 @@ const PostDetail = () => {
               </CommentHeader>
               <CommentText>{comment.content}</CommentText>
               <CommentActions>
-                <Icon>💬</Icon>
+              <img src={heart} alt="heart" width="14" height="14" />
                 <span>28</span>
               </CommentActions>
             </CommentContent>
@@ -96,6 +103,20 @@ const PostDetail = () => {
         />
         <SendButton onClick={handleAddComment}>게시</SendButton>
       </CommentInputContainer>
+
+
+      {showDeleteModal && (
+        <DeleteModal>
+          <DeleteModalContent>
+            <DeleteTitle>게시물을 삭제하시겠어요?</DeleteTitle>
+            <p>삭제한 게시물은 되돌릴 수 없어요.</p>
+            <ButtonContainer>
+              <CancelButton onClick={() => setShowDeleteModal(false)}>아니요</CancelButton>
+              <ConfirmButton onClick={confirmDelete}>예</ConfirmButton>
+            </ButtonContainer>
+          </DeleteModalContent>
+        </DeleteModal>
+      )}
     </Container>
   );
 };
@@ -103,6 +124,33 @@ const PostDetail = () => {
 export default PostDetail;
 
 // 📌 스타일 정의
+const DeleteModal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  `;
+
+const DeleteTitle = styled.div`
+  font-size: 18px;
+  font-weight: bold;
+  `;
+
+const DeleteModalContent = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+  width: 90%;
+  max-width: 500px;
+  `;
+
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -131,7 +179,8 @@ const HeaderButton_back = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
+  width: 12px;
+  height: 15px;
   display: flex;
   align-items: center;
   &:hover {
@@ -199,6 +248,7 @@ const PostText = styled.p`
 /* 🔹 댓글 스타일 개선 */
 const CommentSection = styled.div`
   padding: 10px 15px;
+  margin-left: 30px;
 `;
 
 const Comment = styled.div`
@@ -211,6 +261,7 @@ const Comment = styled.div`
 
 const CommentContent = styled.div`
   flex: 1;
+  
 `;
 
 const CommentContainer = styled.div`
@@ -218,7 +269,7 @@ const CommentContainer = styled.div`
   align-items: flex-start;
   gap: 10px;
   padding: 10px 0;
-  border-bottom: 1px solid #ddd;
+  
 `;
 
 const ProfileImageSmall = styled(ProfileImage)`
@@ -236,6 +287,7 @@ const CommentTime = styled.div`
 const CommentText = styled.div`
   font-size: 14px;
   color: #333;
+  margin-top: 20px;
 `;
 
 /* 🔹 댓글 입력란 스타일 조정 */
@@ -360,12 +412,39 @@ const Icon = styled.span`
 
 const CommentActions = styled.div`
   display: flex;
+  justify-content: flex-end;
   align-items: center;
   gap: 10px;
   margin-top: 5px;
   font-size: 12px;
   color: #999;
 `;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  `;
+
+
+const CancelButton = styled.button`
+  background: #FFFFFF;
+  border: 1px solid gray;
+  width: 48%;
+  padding: 10px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  `;
+
+const ConfirmButton = styled.button`
+  background: #f8223d;
+  color: white;
+  border: 1px, solid gray;
+  width: 48%;
+  padding: 10px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  `;
 
 
 
