@@ -25,7 +25,7 @@ interface AttendanceDay {
   is_attendance: number;
 }
 
-// 날짜를 "YYYY-MM-DD" 형식으로 반환하는 helper 함수 (local time 기준)
+// 날짜를 "YYYY-MM-DD" 형식으로 반환하는 helper 함수
 const formatDate = (date: Date): string => {
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -76,9 +76,8 @@ const MainPage: React.FC = () => {
   const [temperature, setTemperature] = useState<number>(0);
   const [gameInfo, setGameInfo] = useState<any>(null);
 
+  // 나머지 변수들은 기존 코드 그대로 (임시)
   const tempPercent = 0;
-  const attendanceCount = 23;
-  const attendanceMax = 30;
   const directWatchCount = 13;
   const directWatchWin = 6;
   const directWatchWinRate = Math.round((directWatchWin / directWatchCount) * 100);
@@ -116,15 +115,14 @@ const MainPage: React.FC = () => {
       });
   }, []);
 
-  // 오늘 날짜 (local 기준 "YYYY-MM-DD")
+  // 오늘 날짜 (YYYY-MM-DD) 및 기준 연도 2025로 고정
   const today = formatDate(new Date());
-  // 기준 연도를 2025로 고정
   const currentYear = 2025;
 
   // 출석 데이터를 주별로 그룹화하여 저장할 상태
   const [attendanceWeeks, setAttendanceWeeks] = useState<{ week: string; days: AttendanceDay[] }[]>([]);
 
-  // 선택한 월의 출석 데이터를 API로부터 받아와 그룹화 (local 날짜 포맷 사용)
+  // 선택한 월의 출석 데이터를 API로부터 받아와 그룹화
   useEffect(() => {
     fetch(`/home/viewAttendance?month=${attendanceMonth}`)
       .then((res) => res.json())
@@ -174,6 +172,13 @@ const MainPage: React.FC = () => {
     if (date < today) return crossCircle;
     return circle;
   };
+
+  // 출석 카드 상단에 표시할 출석 일수 계산 (attendanceWeeks에 기반)
+  const totalDays = attendanceWeeks.reduce((acc, week) => acc + week.days.length, 0);
+  const attendedCount = attendanceWeeks.reduce(
+    (acc, week) => acc + week.days.filter((day) => day.is_attendance === 1).length,
+    0
+  );
 
   return (
     <div
@@ -295,8 +300,9 @@ const MainPage: React.FC = () => {
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <p style={{ fontSize: "1rem", fontWeight: 600 }}>{attendanceMonth}월 출석체크</p>
+              {/* 계산된 출석 일수 / 한 달 전체 일수 표시 */}
               <p style={{ color: "#EF4444", fontWeight: "bold" }}>
-                {attendanceCount}/{attendanceMax}일 출석 중
+                {attendedCount}/{totalDays}일 출석 중
               </p>
             </div>
             <select
@@ -369,7 +375,7 @@ const MainPage: React.FC = () => {
                       </div>
                     ))}
                   </div>
-                  {/* 오늘 날짜가 포함되어 있고, 오늘 날짜가 아직 출석되지 않았다면 출석 버튼 표시 */}
+                  {/* 오늘 날짜가 포함되어 있고, 해당 날짜가 아직 출석되지 않았다면 출석 버튼 표시 */}
                   {weekData.days.some((day) => day.date === today && day.is_attendance === 0) && (
                     <button
                       style={{
