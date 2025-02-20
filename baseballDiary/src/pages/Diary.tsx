@@ -191,14 +191,16 @@ const Diary = () => {
 
   // selectedYear 변경 시 나의 직관 통계 API 호출
   useEffect(() => {
-    getTeamStat(selectedYear)
+    // 연도를 문자열로 보내도록 수정
+    getTeamStat(`${selectedYear}`)
       .then((stat) => setTeamStat(stat))
       .catch((error) => console.error("팀 통계 가져오기 실패", error));
   }, [selectedYear]);
 
   // selectedYear 변경 시 우리팀 통계 API 호출
   useEffect(() => {
-    getMyStat(selectedYear)
+    // 연도를 문자열로 보내도록 수정
+    getMyStat(`${selectedYear}`)
       .then((stat) => setMyStat(stat))
       .catch((error) => console.error("내 팀 통계 가져오기 실패", error));
   }, [selectedYear]);
@@ -360,7 +362,6 @@ const Diary = () => {
                 marginBottom: "0.5rem",
                 cursor: "pointer",
               }}
-              // 게임 카드 터치 시, 상세 페이지로 이동 (모든 필드 전달)
               onClick={() =>
                 navigate("/diary/detail", {
                   state: { game },
@@ -373,7 +374,6 @@ const Diary = () => {
                 style={{ width: "48px", height: "48px", marginRight: "12px" }}
               />
               <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                {/* 날짜/시간/요일/장소 모두 표시 */}
                 <div
                   style={{
                     display: "flex",
