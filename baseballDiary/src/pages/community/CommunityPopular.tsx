@@ -19,7 +19,7 @@ import kbo from "../../assets/team/KBO.png";
 import { FaEllipsisH } from "react-icons/fa";
 import { useEffect } from "react";
 
-// ✅ 사용자가 회원가입 시 선택한 팀 (테스트용, 실제로는 Redux 또는 Context 사용)
+
 const selectedTeam = "두산";
 
 // ✅ 팀 데이터 예시

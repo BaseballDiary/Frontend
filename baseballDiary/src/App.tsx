@@ -22,6 +22,7 @@ import Mydiary from './pages/Mydiary';
 import Diary from './pages/Diary';
 import DiaryNew from './pages/DiaryNew';
 import CommunityWrite from './pages/community/CommunityWrite';
+import Mypage from './pages/myPage/myPage';
 
 
 const router = createBrowserRouter([
@@ -79,7 +80,7 @@ const router = createBrowserRouter([
       {
         path: 'mypage',
         children: [
-          { index: true, element: <Mydiary/> },
+          { index: true, element: <Mypage/> },
           { path: 'edit', element: <h1>프로필 수정</h1> },
         ],
       },

@@ -3,9 +3,9 @@ import styled from "styled-components"
 
 const MyPage = () => {
     const [user] = useState({
-        name: "사용자 이름",
-        id: "아이디",
-        team: "KIA 타이거즈",
+        name: "사용자",
+        id: "Id",
+        team: "두산 베어스",
         profileImage: "😀",
         posts: 10,
         entries: 10,
