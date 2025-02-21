@@ -1,112 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate, useLocation } from "react-router-dom";
 import lotte from "../../assets/team/lotte.png";
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from "react-router-dom";
+import hanhwa from "../../assets/team/hanhwa.png";
 
-
-interface Team {
-  rank: number;
-  name: string;
-  games: number;
-  wins: number;
-  draws: number;
-  losses: number;
-  winRate: number;
-  logo: string;
-}
-
-const teamData: Team[] = Array(10).fill({
-  rank: 1,
-  name: "롯데",
-  games: 144,
-  wins: 87,
-  draws: 2,
-  losses: 55,
-  winRate: 0.573,
-  logo: lotte,
-});
-
-const TeamRanking = () => {
-  const [selectedYear, setSelectedYear] = useState("2024");
-  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState("schedule");
-  const navigate = useNavigate(); 
-
-  return (
-    <Container>
-      {/* 상단 네비게이션 */}
-      <Header>
-        <Title>경기정보</Title>
-      </Header>
-
-      {/* 탭 메뉴 */}
-      <TabContainer>
-      <Tab $active={location.pathname === "/game/schedule"} onClick={() => navigate("/game/schedule")}>
-  경기 일정
-</Tab>
-<Tab $active={location.pathname === "/game/team-ranking"} onClick={() => navigate("/game/team-ranking")}>
-  팀 순위
-</Tab>
-<Tab $active={location.pathname === "/game/player-ranking"} onClick={() => navigate("/game/player-ranking")}>
-  개인 순위
-</Tab>
-      </TabContainer>
-
-      {/* 연도 선택 */}
-      <YearSelector>
-        <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
-          <option value="2024">2024</option>
-        </select>
-      </YearSelector>
-
-      {/* 팀 순위 테이블 */}
-      <Table>
-        <thead>
-          <tr>
-            <th>순위</th>
-            <th>팀</th>
-            <th>경기</th>
-            <th>승</th>
-            <th>무</th>
-            <th>패</th>
-            <th>승률</th>
-          </tr>
-        </thead>
-        <tbody>
-          {teamData.map((team, index) => (
-            <TableRow
-              key={index}
-              active={selectedTeam === team.name}
-              onClick={() => setSelectedTeam(team.name)}
-            >
-              <td>{team.rank}</td>
-              <td>
-                <TeamInfo>
-                  <TeamLogo src={team.logo} alt={team.name} />
-                  {team.name}
-                </TeamInfo>
-              </td>
-              <td>{team.games}</td>
-              <td>{team.wins}</td>
-              <td>{team.draws}</td>
-              <td>{team.losses}</td>
-              <td>{team.winRate.toFixed(3)}</td>
-            </TableRow>
-          ))}
-        </tbody>
-      </Table>
-
-    
-    </Container>
-  );
-  console.log("현재 선택된 탭:", selectedTab);
-
-};
-
-export default TeamRanking;
-
-// 스타일 정의
+// 전체 컨테이너
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -114,7 +12,11 @@ const Container = styled.div`
   background: #fff;
   height: 100vh;
   overflow-y: auto;
-  padding-top: 100px; /* 👈 헤더(50px) + 탭(40px) 높이 만큼 패딩 추가 */
+  overflow-x: hidden;
+  width: 100vw;
+  max-width: 430px;
+  margin: 0 auto;
+  padding-top: 90px;
 `;
 
 const Header = styled.div`
@@ -141,61 +43,161 @@ const TabContainer = styled.div`
   justify-content: space-around;
   position: fixed;
   top: 50px;
-  left: 1px;
   background: white;
   z-index: 99;
 `;
 
-const Tab = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "$active", // ✅ active가 DOM으로 전달되지 않도록 차단
-})<{ $active?: boolean }>`  // 🔹 속성명을 "$active"로 변경하여 스타일에서만 사용
+const Tab = styled.div<{ $active: boolean }>`
   flex: 1;
   text-align: center;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
+  font-size: 14px;
   color: ${({ $active }) => ($active ? "#f8223b" : "#999")};
   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
   border-bottom: ${({ $active }) => ($active ? "3px solid #f8223b" : "none")};
 `;
 
-
-const YearSelector = styled.div`
+const YearSelector = styled.select`
+  padding: 8px;
   margin: 10px 0;
-  select {
-    padding: 5px;
-    font-size: 16px;
-  }
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
 `;
 
-const Table = styled.table`
+const SectionTitle = styled.h3`
   width: 90%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  text-align: center;
-  th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
+  font-size: 16px;
+  color: #333;
+  margin-top: 15px;
 `;
 
-const TableRow = styled.tr.withConfig({
-  shouldForwardProp: (prop) => prop !== "active",
-})<{ active?: boolean }>`
-  background: ${({ active }) => (active ? "#f8223b" : "#fff")};
-  color: ${({ active }) => (active ? "white" : "black")};
-  cursor: pointer;
+const TeamRankTable = styled.div`
+  width: 90%;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #ddd;
 `;
 
+const TableHeader = styled.div`
+  display: flex;
+  background: #f1f1f1;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 14px;
+`;
 
-const TeamInfo = styled.div`
+const TableRow = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: ${({ selected }) => (selected ? "#f8223b" : "white")};
+  color: ${({ selected }) => (selected ? "white" : "black")};
+  font-weight: ${({ selected }) => (selected ? "bold" : "normal")};
+  white-space: nowrap; /* 👈 팀명이 줄바꿈되지 않도록 설정 */
+`;
+
+const TableCell = styled.div<{ width?: string }>`
+  flex: ${({ width }) => (width ? `0 0 ${width}` : "1")};
+  text-align: center;
+  min-width: ${({ width }) => width || "auto"}; /* 👈 팀명이 너무 좁아지지 않도록 최소 너비 설정 */
+`;
+
+const TeamName = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* 👈 왼쪽 정렬 */
+  text-align: left;
 `;
 
 const TeamLogo = styled.img`
-  width: 30px;
-  height: 30px;
-  margin-right: 5px;
+  width: 25px;
+  height: 25px;
+  margin-right: 8px;
 `;
 
 
+// 예제 팀 순위 데이터
+const teams = [
+  { rank: 1, name: "롯데", logo: lotte, games: 144, win: 87, draw: 2, lose: 55, winRate: 0.573 },
+  { rank: 2, name: "한화", logo: hanhwa, games: 144, win: 85, draw: 3, lose: 56, winRate: 0.567 },
+  { rank: 3, name: "LG", logo: lotte, games: 144, win: 83, draw: 4, lose: 57, winRate: 0.560 },
+  { rank: 4, name: "SSG", logo: hanhwa, games: 144, win: 80, draw: 6, lose: 58, winRate: 0.550 },
+  { rank: 5, name: "삼성", logo: lotte, games: 144, win: 78, draw: 5, lose: 61, winRate: 0.540 },
+];
+
+const TeamRanking = () => {
+  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedTeam, setSelectedTeam] = useState("롯데"); // 선택된 팀
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <Container>
+      {/* 상단 네비게이션 */}
+      <Header>
+        <Title>경기정보</Title>
+      </Header>
+
+      {/* 탭 메뉴 */}
+      <TabContainer>
+        <Tab $active={location.pathname === "/game/schedule"} onClick={() => navigate("/game/schedule")}>
+          경기 일정
+        </Tab>
+        <Tab $active={location.pathname === "/game/team-ranking"} onClick={() => navigate("/game/team-ranking")}>
+          팀 순위
+        </Tab>
+        <Tab $active={location.pathname === "/game/player-ranking"} onClick={() => navigate("/game/player-ranking")}>
+          개인 순위
+        </Tab>
+      </TabContainer>
+
+      {/* 연도 선택 드롭다운 */}
+      <SectionTitle>종합순위</SectionTitle>
+      <YearSelector value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+      </YearSelector>
+
+      {/* 팀 순위 테이블 */}
+      <TeamRankTable>
+  <TableHeader>
+    <TableCell width="10%">순위</TableCell>
+    <TableCell width="25%">팀</TableCell> {/* 👈 너비를 늘려 가로로 정렬 */}
+    <TableCell width="15%">경기</TableCell>
+    <TableCell width="10%">승</TableCell>
+    <TableCell width="10%">무</TableCell>
+    <TableCell width="10%">패</TableCell>
+    <TableCell width="15%">승률</TableCell>
+  </TableHeader>
+
+  {teams.map((team) => (
+    <TableRow
+      key={team.rank}
+      selected={team.name === selectedTeam}
+      onClick={() => setSelectedTeam(team.name)}
+    >
+      <TableCell>{team.rank}</TableCell>
+      <TableCell>
+        <TeamName>
+          <TeamLogo src={team.logo} alt={team.name} />
+          {team.name}
+        </TeamName>
+      </TableCell>
+      <TableCell>{team.games}</TableCell>
+      <TableCell>{team.win}</TableCell>
+      <TableCell>{team.draw}</TableCell>
+      <TableCell>{team.lose}</TableCell>
+      <TableCell>{team.winRate.toFixed(3)}</TableCell>
+    </TableRow>
+  ))}
+</TeamRankTable>
+
+    </Container>
+  );
+};
+
+export default TeamRanking;
