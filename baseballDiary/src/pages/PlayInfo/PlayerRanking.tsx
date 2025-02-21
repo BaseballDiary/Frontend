@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
 import styled from "styled-components";
 import lotte from "../../assets/team/lotte.png";
 import hanhwa from "../../assets/team/hanhwa.png";
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
+// 전체 컨테이너
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -13,7 +12,10 @@ const Container = styled.div`
   background: #fff;
   height: 100vh;
   overflow-y: auto;
-  padding-top: 90px; /* 👈 헤더(50px) + 탭(40px) 높이 만큼 패딩 추가 */
+  width: 100vw;
+  max-width: 430px;
+  margin: 0 auto;
+  padding-top: 90px;
 `;
 
 const Header = styled.div`
@@ -40,25 +42,20 @@ const TabContainer = styled.div`
   justify-content: space-around;
   position: fixed;
   top: 50px;
-  left: 1px;
   background: white;
   z-index: 99;
 `;
 
-const Tab = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "$active", // ✅ active가 DOM으로 전달되지 않도록 차단
-})<{ $active?: boolean }>`  // 🔹 속성명을 "$active"로 변경하여 스타일에서만 사용
+const Tab = styled.div<{ $active: boolean }>`
   flex: 1;
   text-align: center;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
+  font-size: 14px;
   color: ${({ $active }) => ($active ? "#f8223b" : "#999")};
   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
   border-bottom: ${({ $active }) => ($active ? "3px solid #f8223b" : "none")};
 `;
-
-
-
 
 const SubTabContainer = styled.div`
   display: flex;
@@ -82,6 +79,7 @@ const CardContainer = styled.div`
   overflow-x: auto;
   width: 90%;
   margin-top: 10px;
+  padding-bottom: 10px;
 `;
 
 const PlayerCard = styled.div`
@@ -132,8 +130,10 @@ const Table = styled.table`
   }
 `;
 
-const TableRow = styled.tr`
+const TableRow = styled.tr<{ selected?: boolean }>`
   cursor: pointer;
+  background: ${({ selected }) => (selected ? "#f8223b" : "white")};
+  color: ${({ selected }) => (selected ? "white" : "black")};
 `;
 
 const PlayerInfo = styled.div`
@@ -146,9 +146,6 @@ const ProfileImageSmall = styled.img`
   height: 30px;
   margin-right: 5px;
 `;
-
-
-
 
 interface Player {
   rank: number;
@@ -189,33 +186,27 @@ const batterData: Player[] = Array(10).fill({
 const PlayerRanking = () => {
   const [selectedYear, setSelectedYear] = useState("2024");
   const [selectedTab, setSelectedTab] = useState<"투수" | "타자">("투수");
-  const [selectedTab2, setSelectedTab2] = useState("schedule");
-  const navigate = useNavigate(); 
-  const location = useLocation(); // 현재 경로 가져오기
-
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <Container>
-      {/* 상단 네비게이션 */}
       <Header>
         <Title>경기정보</Title>
       </Header>
 
-      {/* 탭 메뉴 */}
       <TabContainer>
-      <Tab $active={location.pathname === "/game/schedule"} onClick={() => navigate("/game/schedule")}>
-  경기 일정
-</Tab>
-<Tab $active={location.pathname === "/game/team-ranking"} onClick={() => navigate("/game/team-ranking")}>
-  팀 순위
-</Tab>
-<Tab $active={location.pathname === "/game/player-ranking"} onClick={() => navigate("/game/player-ranking")}>
-  개인 순위
-</Tab>
+        <Tab $active={location.pathname === "/game/schedule"} onClick={() => navigate("/game/schedule")}>
+          경기 일정
+        </Tab>
+        <Tab $active={location.pathname === "/game/team-ranking"} onClick={() => navigate("/game/team-ranking")}>
+          팀 순위
+        </Tab>
+        <Tab $active={location.pathname === "/game/player-ranking"} onClick={() => navigate("/game/player-ranking")}>
+          개인 순위
+        </Tab>
       </TabContainer>
 
-
-      {/* 투수/타자 선택 */}
       <SubTabContainer>
         <SubTab active={selectedTab === "투수"} onClick={() => setSelectedTab("투수")}>
           투수
@@ -225,7 +216,6 @@ const PlayerRanking = () => {
         </SubTab>
       </SubTabContainer>
 
-      {/* 선수 카드 리스트 */}
       <CardContainer>
         {(selectedTab === "투수" ? pitcherData : batterData).map((player, index) => (
           <PlayerCard key={index}>
@@ -239,14 +229,12 @@ const PlayerRanking = () => {
         ))}
       </CardContainer>
 
-      {/* 연도 선택 */}
       <YearSelector>
         <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
           <option value="2024">2024</option>
         </select>
       </YearSelector>
 
-      {/* 선수 순위 테이블 */}
       <Table>
         <thead>
           <tr>
@@ -279,10 +267,7 @@ const PlayerRanking = () => {
         </tbody>
       </Table>
     </Container>
-    
   );
-  console.log("현재 선택된 탭:", selectedTab);
-
 };
 
 export default PlayerRanking;

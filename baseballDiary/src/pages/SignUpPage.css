@@ -57,6 +57,36 @@
   background-color: #2CCF53;
 }
 
+.validation-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.validation-list li {
+  font-size: 14px;
+  font-weight: bold;
+  color: gray; /* 기본 색상 */
+}
+
+.validation-list .valid {
+  color: #2CCF53; /* ✅ 충족된 조건 - 초록색 */
+}
+
+.validation-list .invalid {
+  color: gray; /* ❌ 충족되지 않은 조건 - 회색 */
+}
+
+.error-text {
+  font-family: 'NanumSquareRound';
+  font-weight: 400;
+  color: #EA2F3E; 
+  font-size: 14px; 
+  margin-top: 4px; 
+}
+
 .signup-button:disabled {
   background-color: #AAABAC;
 }

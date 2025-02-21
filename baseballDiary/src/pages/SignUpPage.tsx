@@ -17,6 +17,12 @@ const SignUpPage: React.FC = () => {
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [isPasswordMatched, setIsPasswordMatched] = useState(false);
 
+  // ✅ 유효성 검사 상태
+  const [isLengthValid, setIsLengthValid] = useState(false);
+  const [hasLetter, setHasLetter] = useState(false);
+  const [hasNumber, setHasNumber] = useState(false);
+  const [hasSpecialChar, setHasSpecialChar] = useState(false);
+
   // 이메일 유효성 검사
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -72,8 +78,9 @@ const SignUpPage: React.FC = () => {
       const response = await confirmVerificationCode(email, verificationCode);
       
       if (response) {
-        setIsConfirmed(true); // ✅ 본인 확인 완료 → 버튼 비활성화
         alert("✅ 본인 확인이 완료되었습니다!");
+        setIsConfirmed(true); // ✅ 본인 확인 완료 → 버튼 비활성화
+        
         
       }
     } catch (error) {
@@ -82,10 +89,15 @@ const SignUpPage: React.FC = () => {
     }
   };
 
-  // PW 입력 핸들러
+   // ✅ 비밀번호 입력 핸들러 (입력할 때마다 유효성 검사)
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-    setIsPasswordValid(e.target.value.length >= 8 && e.target.value.length <= 16);
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+
+    setIsLengthValid(newPassword.length >= 8 && newPassword.length <= 16);
+    setHasLetter(/[a-zA-Z]/.test(newPassword));
+    setHasNumber(/\d/.test(newPassword));
+    setHasSpecialChar(/[!@#$%^&*(),.?":{}|<>]/.test(newPassword));
   };
 
   // PW 재입력 핸들러
@@ -120,7 +132,7 @@ const SignUpPage: React.FC = () => {
             className={`
             sendVerificationCode-button 
             ${isConfirmed ? "confirmed" : ""}
-            ${isRequestDisabled || !isEmailValid ? "disabled" : ""}`}
+            `}
             onClick={handleRequestVerification} 
             disabled={isConfirmed || !isEmailValid || isRequestDisabled }>
             {isConfirmed ? "인증완료" : isRequestDisabled ? `다시 요청 가능 (${timer}초)` : "인증번호받기"}
@@ -145,22 +157,31 @@ const SignUpPage: React.FC = () => {
         {/* 비밀번호 입력 컨테이너 */}
         <div className="input-container">
           <label className="input-label">비밀번호</label>
-          <p className="password-guidelines">영문,숫자,특수문자를 포함해 8~16자로 작성해주세요.</p>
+          <ul className="validation-list">
+            <li className={isLengthValid ? "valid" : "invalid"}>✔ 8~16자</li>
+            <li className={hasLetter ? "valid" : "invalid"}>✔ 영문</li>
+            <li className={hasNumber ? "valid" : "invalid"}>✔ 숫자</li>
+            <li className={hasSpecialChar ? "valid" : "invalid"}>✔ 특수문자</li>
+          </ul>
 
           <InputField 
           type="password" 
           placeholder="비밀번호 입력해주세요." 
           value={password} 
-          onChange={handlePasswordChange} />
-          {!isPasswordValid && password.length > 0 && <p className="error-text">비밀번호는 8~16자여야 합니다.</p>}
-          <InputField type="password" placeholder="비밀번호를 한 번 더 입력해주세요." value={passwordConfirm} onChange={handlePasswordConfirmChange} />
+          onChange={handlePasswordChange}/>
+
+          <InputField 
+          type="password"
+          placeholder="비밀번호를 한 번 더 입력해주세요."
+          value={passwordConfirm}
+          onChange={handlePasswordConfirmChange} />
           {!isPasswordMatched && passwordConfirm.length > 0 && <p className="error-text">비밀번호가 일치하지 않습니다.</p>}
         </div>
 
         <button 
         className="signup-button"
         onClick={() => signup(email, password, passwordConfirm)}
-        disabled={!(isConfirmed && isPasswordValid && isPasswordMatched)}
+        disabled={false}
         >
           회원가입
         </button>

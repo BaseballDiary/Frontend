@@ -21,6 +21,8 @@ import "../styles.css"
 import Mydiary from './pages/Mydiary';
 import Diary from './pages/Diary';
 import DiaryNew from './pages/DiaryNew';
+import CommunityWrite from './pages/community/CommunityWrite';
+import Mypage from './pages/myPage/myPage';
 
 
 const router = createBrowserRouter([
@@ -61,7 +63,9 @@ const router = createBrowserRouter([
           { index: true, element: <Navigate to="/community/all" replace /> },  // 기본 경로 설정
           { path: 'all', element: <CommunityTotal/> },
           { path: 'popular', element: <CommunityPopular /> },
-          { path: 'post/:postId', element: <PostDetail /> }
+          { path: 'post/:postId', element: <PostDetail /> },
+          { path: 'write', element: <CommunityWrite />}
+          //{ path: 'search', element: <CommunitySearch />}
         ],
       },
       {
@@ -76,7 +80,7 @@ const router = createBrowserRouter([
       {
         path: 'mypage',
         children: [
-          { index: true, element: <Mydiary/> },
+          { index: true, element: <Mypage/> },
           { path: 'edit', element: <h1>프로필 수정</h1> },
         ],
       },

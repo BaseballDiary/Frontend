@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaEdit } from "react-icons/fa"; // 글쓰기 아이콘
 import teamLogos from "../../assets/teamLogos"; // 팀 아이콘 배열
+import pencil from "../../assets/pencil.png"
+import searchIcon from "../../assets/search.png";
 import lotte from "../../assets/team/lotte.png";
 import doosan from "../../assets/team/doosan.png";
 import samsung from "../../assets/team/samsung.png";
@@ -38,7 +39,7 @@ const teams = [
 const CommunityTotal = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState<number | null>(null); // 현재 열린 메뉴의 ID 저장
   const [currentTab, setCurrentTab] = useState("/community/all");
 
   return (
@@ -46,7 +47,7 @@ const CommunityTotal = () => {
       {/* 상단 네비게이션 */}
       <Header>
         <Title>커뮤니티</Title>
-        <SearchIcon>🔍</SearchIcon>
+        <img src={searchIcon} alt="search" width="20" height="20" />
       </Header>
 
       {/* 탭 메뉴 */}
@@ -96,9 +97,19 @@ const CommunityTotal = () => {
             
               {/* 15분전과 점 세 개 버튼을 감싸는 컨테이너 */}
               <PostActions>
-                <OptionsButton onClick={() => setMenuOpen(!menuOpen)}>
+                {/* 점 3개 버튼 */}
+                <OptionsButton onClick={() => setMenuOpen(menuOpen === index ? null : index)}>
                   <FaEllipsisH size={18} />
                 </OptionsButton>
+
+                {/* 삭제 버튼 (메뉴) */}
+                {menuOpen === index && (
+                  <Menu>
+                    <MenuItem className="delete" onClick={() => console.log("삭제됨")}>
+                      🗑 삭제하기
+                    </MenuItem>
+                  </Menu>
+                )}
               </PostActions>
             </PostHeader>
             <PostText>
@@ -116,8 +127,8 @@ const CommunityTotal = () => {
       </PostList>
 
       {/* 글쓰기 버튼 */}
-      <WriteButton>
-        <FaEdit size={24} color="white" />
+      <WriteButton onClick={() => navigate("/community/write")}>
+      <img src={pencil} alt="write" width="23" height="23" />
       </WriteButton>
     </Container>
   );
@@ -152,6 +163,8 @@ const Header = styled.div`
 const Title = styled.h2`
   color: white;
   font-size: 18px;
+  text-align: center;
+  flex: 1;
 `;
 
 const SearchIcon = styled.div`

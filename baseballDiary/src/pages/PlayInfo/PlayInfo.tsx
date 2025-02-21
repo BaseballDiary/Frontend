@@ -1,11 +1,9 @@
-
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import lotte from "../../assets/team/lotte.png";
+import { useNavigate, useLocation } from "react-router-dom";
+import doosan from "../../assets/team/doosan.png";
 import hanhwa from "../../assets/team/hanhwa.png";
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from "react-router-dom";
+import kbo from "../../assets/team/KBO.png";
 
 // 전체 컨테이너
 const Container = styled.div`
@@ -15,7 +13,11 @@ const Container = styled.div`
   background: #fff;
   height: 100vh;
   overflow-y: auto;
-  padding-top: 90px; /* 👈 헤더(50px) + 탭(40px) 높이 만큼 패딩 추가 */
+  overflow-x:hidden;
+  width:100vw;
+  max-width: 430px;
+  margin: 0 auto;
+  padding-top: 90px;
 `;
 
 const Header = styled.div`
@@ -42,151 +44,126 @@ const TabContainer = styled.div`
   justify-content: space-around;
   position: fixed;
   top: 50px;
-  left: 1px;
   background: white;
   z-index: 99;
 `;
 
-const Tab = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "$active", // ✅ active가 DOM으로 전달되지 않도록 차단
-})<{ $active?: boolean }>`  // 🔹 속성명을 "$active"로 변경하여 스타일에서만 사용
+const Tab = styled.div<{ $active: boolean }>`
   flex: 1;
   text-align: center;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
+  font-size: 14px;
   color: ${({ $active }) => ($active ? "#f8223b" : "#999")};
   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
   border-bottom: ${({ $active }) => ($active ? "3px solid #f8223b" : "none")};
 `;
 
-
-// 날짜 선택
-export const DateContainer = styled.div`
+const DateContainer = styled.div`
   display: flex;
-  justify-content: space-around;
-  width: 100%;
-  padding: 10px;
+  justify-content: center;
+  gap: 1px;
+  margin-top: 10px;
 `;
 
-export const DateBox = styled.div<{ active?: boolean }>`
-  padding: 5px 10px;
-  border-radius: 10px;
+const DateBox = styled.div<{ active?: boolean }>`
+  padding: 10px 15px;
+  border-radius: 8px;
   background: ${({ active }) => (active ? "#f8223b" : "#eee")};
   color: ${({ active }) => (active ? "#fff" : "#000")};
   font-weight: bold;
   cursor: pointer;
+  text-align: center;
 `;
 
-// 경기 섹션
-export const SectionTitle = styled.h3`
+const SectionTitle = styled.h3`
   width: 90%;
   font-size: 16px;
   color: #333;
   margin-top: 15px;
 `;
 
-// 내 구단 경기
-export const MyTeamMatch = styled.div`
+const MyTeamMatch = styled.div`
   display: flex;
   align-items: center;
   background: #f8223b;
   color: white;
-  padding: 10px;
+  padding: 15px;
   width: 90%;
   border-radius: 10px;
   justify-content: space-between;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 `;
 
-export const TeamLogo = styled.img`
-  width: 50px;
-  height: 50px;
+const TeamLogo = styled.img`
+  width: 55px;
+  height: 55px;
 `;
 
-export const MatchDetails = styled.div`
+const MatchDetails = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-export const MatchTime = styled.span`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 `;
 
-export const MatchStatus = styled.span`
+const MatchTime = styled.span`
+  font-size: 20px;
+`;
+
+const MatchStatus = styled.span`
   font-size: 14px;
 `;
 
-// 오늘의 경기 리스트
-export const MatchList = styled.div`
+const MatchList = styled.div`
   width: 90%;
+  margin-bottom: 20px;
 `;
 
-export const MatchItem = styled.div`
+const MatchItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px;
+  padding: 12px;
   border-bottom: 1px solid #ddd;
+  font-size: 14px;
 `;
 
-export const MatchTimeSmall = styled.span`
+const MatchTimeSmall = styled.span`
   font-size: 14px;
   color: #666;
+  width: 50px;
 `;
 
-export const MatchResult = styled.span`
+const MatchResult = styled.span`
   font-size: 16px;
   font-weight: bold;
-  color: #000;
+  color: #333;
+  flex: 1;
+  text-align: center;
 `;
 
-export const MatchStatusSmall = styled.span`
+const MatchStatusSmall = styled.span<{ status?: string }>`
   font-size: 14px;
-  color: green;
+  color: ${({ status }) => (status === "종료" ? "gray" : "green")};
+  font-weight: bold;
 `;
 
-export const TeamIcons = styled.div`
+const TeamIcons = styled.div`
   display: flex;
   gap: 5px;
 `;
 
-export const TeamLogoSmall = styled.img`
+const TeamLogoSmall = styled.img`
   width: 30px;
   height: 30px;
 `;
 
-// 하단 네비게이션
-export const BottomNav = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-  background: white;
-  border-top: 1px solid #ddd;
-  padding: 10px 0;
-  position: fixed;
-  bottom: 0;
-`;
-
-export const NavItem = styled.div<{ active?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 12px;
-  color: ${({ active }) => (active ? "#f8223b" : "#666")};
-  font-weight: ${({ active }) => (active ? "bold" : "normal")};
-`;
-
-export const NavIcon = styled.span`
-  font-size: 20px;
-`;
-
-
-
 const PlayInfo = () => {
   const [selectedDate, setSelectedDate] = useState(7);
-  const [selectedTab, setSelectedTab] = useState("schedule");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <Container>
@@ -197,22 +174,21 @@ const PlayInfo = () => {
 
       {/* 탭 메뉴 */}
       <TabContainer>
-      <Tab $active={location.pathname === "/game/schedule"} onClick={() => navigate("/game/schedule")}>
-  경기 일정
-</Tab>
-<Tab $active={location.pathname === "/game/team-ranking"} onClick={() => navigate("/game/team-ranking")}>
-  팀 순위
-</Tab>
-<Tab $active={location.pathname === "/game/player-ranking"} onClick={() => navigate("/game/player-ranking")}>
-  개인 순위
-</Tab>
+        <Tab $active={location.pathname === "/game/schedule"} onClick={() => navigate("/game/schedule")}>
+          경기 일정
+        </Tab>
+        <Tab $active={location.pathname === "/game/team-ranking"} onClick={() => navigate("/game/team-ranking")}>
+          팀 순위
+        </Tab>
+        <Tab $active={location.pathname === "/game/player-ranking"} onClick={() => navigate("/game/player-ranking")}>
+          개인 순위
+        </Tab>
       </TabContainer>
-
 
       {/* 날짜 선택 */}
       <DateContainer>
-        {[7, 7, 7, 7, 7, 7, 7].map((day, index) => (
-          <DateBox key={index} active={index === 1} onClick={() => setSelectedDate(day)}>
+        {[7, 8, 9, 10, 11, 12, 13].map((day, index) => (
+          <DateBox key={index} active={day === selectedDate} onClick={() => setSelectedDate(day)}>
             {day} 화
           </DateBox>
         ))}
@@ -221,7 +197,7 @@ const PlayInfo = () => {
       {/* 내 구단 경기 */}
       <SectionTitle>내 구단 경기</SectionTitle>
       <MyTeamMatch>
-        <TeamLogo src={lotte} alt="롯데" />
+        <TeamLogo src={doosan} alt="롯데" />
         <MatchDetails>
           <MatchTime>18:00</MatchTime>
           <MatchStatus>잠실</MatchStatus>
@@ -232,35 +208,26 @@ const PlayInfo = () => {
       {/* 오늘의 경기 리스트 */}
       <SectionTitle>오늘의 경기</SectionTitle>
       <MatchList>
-        <MatchItem>
-          <MatchTimeSmall>15:00</MatchTimeSmall>
-          <TeamIcons>
-            <TeamLogoSmall src={lotte} alt="롯데" />
-            </TeamIcons>
-            <MatchResult>롯데 4 - 9 한화</MatchResult>
+        {[
+          { time: "15:00", status: "종료", team1: doosan, team2: hanhwa, result: "롯데 4 - 9 한화" },
+          { time: "17:00", status: "예정", team1: doosan, team2: hanhwa, result: "롯데 vs 한화" },
+          { time: "18:00", status: "예정", team1: doosan, team2: hanhwa, result: "롯데 vs 한화" },
+        ].map((game, index) => (
+          <MatchItem key={index}>
+            <MatchTimeSmall>{game.time}</MatchTimeSmall>
             <TeamIcons>
-            <TeamLogoSmall src={hanhwa} alt="한화" />
-          </TeamIcons>
-        </MatchItem>
-        <MatchItem>
-          <MatchTimeSmall>17:00</MatchTimeSmall>
-          <TeamIcons>
-            <TeamLogoSmall src={lotte} alt="롯데" />
+              <TeamLogoSmall src={game.team1} alt="team1" />
             </TeamIcons>
-            <MatchStatusSmall>예정</MatchStatusSmall>
+            <MatchResult>{game.result}</MatchResult>
             <TeamIcons>
-            <TeamLogoSmall src={hanhwa} alt="한화" />
-          </TeamIcons>
-        </MatchItem>
+              <TeamLogoSmall src={game.team2} alt="team2" />
+            </TeamIcons>
+            <MatchStatusSmall status={game.status}>{game.status}</MatchStatusSmall>
+          </MatchItem>
+        ))}
       </MatchList>
-
-      
-      
     </Container>
   );
-  
-  console.log("현재 선택된 탭:", selectedTab);
-
 };
 
 export default PlayInfo;
